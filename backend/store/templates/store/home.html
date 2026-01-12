@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- HERO BANNER SLIDER -->
+<div id="homeCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    {% for banner in banners %}
+      <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></button>
+    {% endfor %}
+  </div>
+
+  <div class="carousel-inner">
+    {% for banner in banners %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <a href="{{ banner.link }}">
+          <img src="{{ banner.image.url }}" class="d-block w-100" alt="{{ banner.title }}">
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+</div>
+
+
+<!-- CATEGORY TILES -->
+<div class="container mb-5">
+  <h3 class="mb-3">Shop by Category</h3>
+  <div class="row">
+    {% for cat in categories %}
+      <div class="col-md-4 mb-3">
+        <a href="{% url 'category' cat.slug %}" class="text-decoration-none text-dark">
+          {% if cat.image %}
+            <img src="{{ cat.image.url }}" class="img-fluid rounded" alt="{{ cat.name }}">
+          {% else %}
+            <div class="bg-light border rounded p-5 text-center">
+              {{ cat.name }}
+            </div>
+          {% endif %}
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+<!-- FEATURED PRODUCTS SLIDER -->
+<div class="container mb-5">
+  <h3 class="mb-3">Featured Products</h3>
+  <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+
+      {% for product in featured_products %}
+        {% if forloop.counter0|divisibleby:4 %}
+          <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
+            <div class="row">
+        {% endif %}
+
+        <div class="col-md-3">
+          <div class="card mb-3">
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            <div class="card-body">
+              <h6 class="card-title">{{ product.name }}</h6>
+              <p class="card-text">₹{{ product.price }}</p>
+              <a href="{% url 'product_detail' product.slug %}" class="btn btn-primary btn-sm">View</a>
+            </div>
+          </div>
+        </div>
+
+        {% if forloop.counter|divisibleby:4 or forloop.last %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+</div>
+
+{% endblock %}

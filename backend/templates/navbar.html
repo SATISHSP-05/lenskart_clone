@@ -1,0 +1,104 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+  <div class="container-fluid">
+
+    <!-- Logo -->
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <img src="https://static.lenskart.com/media/desktop/img/site-images/main_logo.svg"
+           alt="Logo" height="35">
+    </a>
+
+    <!-- Mobile Drawer Button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Desktop Navbar -->
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <!-- Categories -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="catMenu" role="button" data-bs-toggle="dropdown">
+            Categories
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'category' 'men' %}">Men</a></li>
+            <li><a class="dropdown-item" href="{% url 'category' 'women' %}">Women</a></li>
+            <li><a class="dropdown-item" href="{% url 'category' 'kids' %}">Kids</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'category' 'eyeglasses' %}">Eyeglasses</a></li>
+            <li><a class="dropdown-item" href="{% url 'category' 'computer-glasses' %}">Computer Glasses</a></li>
+          </ul>
+        </li>
+
+      </ul>
+
+      <!-- Search -->
+      <form class="d-flex me-3" method="GET" action="{% url 'product_search' %}">
+        <input class="form-control" type="search" placeholder="Search..." name="q"
+               aria-label="Search">
+      </form>
+
+      <!-- Cart -->
+      <a href="{% url 'cart' %}" class="btn position-relative me-3">
+        🛒 Cart
+        {% if cart_item_count %}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          {{ cart_item_count }}
+        </span>
+        {% endif %}
+      </a>
+
+      <!-- Auth Buttons -->
+      {% if request.user.is_authenticated %}
+        <div class="dropdown">
+          <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            {{ request.user.username }}
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'orders' %}">My Orders</a></li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Sign Out</a></li>
+          </ul>
+        </div>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-primary">Signup</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Drawer (Offcanvas) -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Menu</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+  </div>
+
+  <div class="offcanvas-body">
+
+    <!-- Categories -->
+    <div class="mb-3">
+      <h6>Categories</h6>
+      <a href="{% url 'category' 'men' %}" class="d-block py-1">Men</a>
+      <a href="{% url 'category' 'women' %}" class="d-block py-1">Women</a>
+      <a href="{% url 'category' 'kids' %}" class="d-block py-1">Kids</a>
+      <a href="{% url 'category' 'eyeglasses' %}" class="d-block py-1">Eyeglasses</a>
+      <a href="{% url 'category' 'computer-glasses' %}" class="d-block py-1">Computer Glasses</a>
+    </div>
+
+    <!-- Auth -->
+    <div class="mt-4">
+      {% if request.user.is_authenticated %}
+        <a href="{% url 'orders' %}" class="btn btn-outline-secondary w-100 mb-2">My Orders</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger w-100">Sign Out</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn btn-outline-primary w-100 mb-2">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-primary w-100">Signup</a>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
