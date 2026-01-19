@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home Eye Test - Address{% endblock %}
+
+{% block extra_head %}
+<style>
+  .lk-topbar,
+  .lk-header,
+  .lk-nav {
+    display: none;
+  }
+  .lk-hto-flow {
+    max-width: 520px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e6e6f2;
+    border-radius: 16px;
+    padding: 18px;
+  }
+  .lk-hto-steps {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    color: #a0a0b3;
+    border-bottom: 1px solid #ececf5;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .lk-hto-step {
+    font-weight: 600;
+  }
+  .lk-hto-step.active {
+    color: #1f1f4a;
+  }
+  .lk-hto-panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1f1f4a;
+    margin-bottom: 12px;
+  }
+  .lk-hto-address-add {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border: 1px solid #e6e6f2;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #1f1f4a;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .lk-hto-address-add span {
+    color: #9aa0b5;
+    font-weight: 700;
+  }
+  .lk-hto-address-card {
+    border: 1px solid #c9c9e6;
+    border-radius: 12px;
+    padding: 12px 14px;
+    background: #f3f3ff;
+    font-size: 12px;
+    color: #323252;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  .lk-hto-address-name {
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .lk-hto-address-card.active {
+    border-color: #0b0a4a;
+    box-shadow: 0 0 0 2px rgba(11, 10, 74, 0.12);
+  }
+  .lk-hto-empty {
+    border: 1px dashed #d8d8ef;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 12px;
+    color: #6b6b86;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .lk-hto-flow-footer {
+    margin-top: 18px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lk-hto-page">
+  <div class="lk-hto-topbar">
+    <img src="/media/home%20test%20svg/Lenskart_20at_20home.svg" alt="Lenskart at Home">
+    <div class="lk-hto-phone">+919021340340</div>
+  </div>
+
+  <div class="lk-hto-flow">
+    <div class="lk-hto-steps">
+      <span class="lk-hto-step">Login/Signup</span>
+      <span class="lk-hto-step active">Address</span>
+      <span class="lk-hto-step">Date &amp; Time</span>
+      <span class="lk-hto-step">Confirm Appointment</span>
+    </div>
+
+    <div class="lk-hto-panel-title">Saved Address</div>
+    <a class="lk-hto-address-add" href="{% url 'hto_new_location' %}">
+      Add a new address
+      <span>&gt;</span>
+    </a>
+
+    <div id="lk-hto-addresses"></div>
+
+    <div class="lk-hto-flow-footer">
+      <a class="lk-hto-btn lk-hto-btn-dark" id="lk-hto-proceed" href="{% url 'hto_date_time' %}">Proceed</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ addresses|json_script:"lkHtoSeededAddresses" }}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var seeded = [];
+    var seededNode = document.getElementById("lkHtoSeededAddresses");
+    if (seededNode) {
+      try {
+        seeded = JSON.parse(seededNode.textContent || "[]");
+      } catch (err) {
+        seeded = [];
+      }
+    }
+
+    var stored = [];
+    try {
+      stored = JSON.parse(localStorage.getItem("lkHtoAddresses") || "[]");
+    } catch (err) {
+      stored = [];
+    }
+
+    var all = seeded.concat(stored);
+    var container = document.getElementById("lk-hto-addresses");
+    if (!container) return;
+
+    if (!all.length) {
+      var empty = document.createElement("div");
+      empty.className = "lk-hto-empty";
+      empty.textContent = "No saved addresses yet.";
+      container.appendChild(empty);
+      return;
+    }
+
+    var selected = localStorage.getItem("lkHtoSelectedAddress");
+
+    all.forEach(function (item, index) {
+      var card = document.createElement("div");
+      card.className = "lk-hto-address-card";
+      var label = [
+        item.address_line,
+        item.city,
+        item.state,
+        item.pincode
+      ].filter(Boolean).join(", ");
+      card.innerHTML =
+        '<div class="lk-hto-address-name">' +
+        (item.name || "") +
+        "</div>" +
+        "<div>" +
+        (item.phone || "") +
+        "</div>" +
+        "<div>" +
+        label +
+        "</div>";
+      card.setAttribute("data-index", String(index));
+      if (selected) {
+        try {
+          var selectedObj = JSON.parse(selected);
+          if (selectedObj && selectedObj.phone === item.phone && selectedObj.address_line === item.address_line) {
+            card.classList.add("active");
+          }
+        } catch (err) {
+          // Ignore parse errors.
+        }
+      }
+      card.addEventListener("click", function () {
+        document.querySelectorAll(".lk-hto-address-card").forEach(function (el) {
+          el.classList.remove("active");
+        });
+        card.classList.add("active");
+        localStorage.setItem("lkHtoSelectedAddress", JSON.stringify(item));
+      });
+      container.appendChild(card);
+    });
+  });
+</script>
+{% endblock %}

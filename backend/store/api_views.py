@@ -76,6 +76,15 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         return Response(ProductSerializer(product).data, status=status.HTTP_201_CREATED)
 
+    @action(detail=False, methods=["post"], url_path="bulk")
+    def bulk_create(self, request):
+        if not isinstance(request.data, list):
+            return Response({"detail": "Expected a list of products."}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ProductSerializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        products = Product.objects.bulk_create([Product(**item) for item in serializer.validated_data])
+        return Response(ProductSerializer(products, many=True).data, status=status.HTTP_201_CREATED)
+
 
 class ProductImageViewSet(viewsets.ModelViewSet):
     queryset = ProductImage.objects.all()

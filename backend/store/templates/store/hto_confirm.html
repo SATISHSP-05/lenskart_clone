@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home Eye Test - Confirm{% endblock %}
+
+{% block extra_head %}
+<style>
+  .lk-topbar,
+  .lk-header,
+  .lk-nav {
+    display: none;
+  }
+  .lk-hto-confirm-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 0.8fr;
+    gap: 18px;
+  }
+  .lk-hto-confirm-card {
+    background: #fff;
+    border: 1px solid #e6e6f2;
+    border-radius: 16px;
+    padding: 20px;
+  }
+  .lk-hto-steps {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    color: #a0a0b3;
+    border-bottom: 1px solid #ececf5;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .lk-hto-step {
+    font-weight: 600;
+  }
+  .lk-hto-step.active {
+    color: #1f1f4a;
+  }
+  .lk-hto-confirm-hero {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .lk-hto-confirm-hero .tick {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #0b0a4a;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    margin-bottom: 8px;
+  }
+  .lk-hto-confirm-hero h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f1f4a;
+    margin-bottom: 4px;
+  }
+  .lk-hto-confirm-hero p {
+    font-size: 12px;
+    color: #6b6b86;
+    margin-bottom: 0;
+  }
+  .lk-hto-confirm-row {
+    border-top: 1px solid #ececf5;
+    padding-top: 12px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: #6b6b86;
+  }
+  .lk-hto-confirm-row strong {
+    color: #1f1f4a;
+  }
+  .lk-hto-confirm-side {
+    background: #fff;
+    border: 1px solid #e6e6f2;
+    border-radius: 16px;
+    padding: 20px;
+  }
+  .lk-hto-confirm-side h4 {
+    font-size: 14px;
+    color: #1f1f4a;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .lk-hto-confirm-side p {
+    font-size: 12px;
+    color: #6b6b86;
+    margin-bottom: 6px;
+  }
+  @media (max-width: 900px) {
+    .lk-hto-confirm-wrap {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lk-hto-page">
+  <div class="lk-hto-topbar">
+    <img src="/media/home%20test%20svg/Lenskart_20at_20home.svg" alt="Lenskart at Home">
+    <div class="lk-hto-phone">+919021340340</div>
+  </div>
+
+  <div class="lk-hto-confirm-wrap">
+    <div class="lk-hto-confirm-card">
+      <div class="lk-hto-steps">
+        <span class="lk-hto-step">Login/Signup</span>
+        <span class="lk-hto-step">Address</span>
+        <span class="lk-hto-step">Date &amp; Time</span>
+        <span class="lk-hto-step active">Confirm Appointment</span>
+      </div>
+
+      <div class="lk-hto-confirm-hero">
+        <div class="tick">&#10003;</div>
+        <h3>Thank You</h3>
+        <p>We are finding a professional for you.</p>
+      </div>
+
+      <div class="lk-hto-confirm-row" id="lk-hto-confirm-address"></div>
+      <div class="lk-hto-confirm-row" id="lk-hto-confirm-time"></div>
+      <div class="lk-hto-confirm-row" id="lk-hto-confirm-amount"></div>
+
+      <div class="lk-hto-flow-footer">
+        <a class="lk-hto-btn lk-hto-btn-dark" href="{% url 'home' %}">View orders</a>
+      </div>
+    </div>
+
+    <div class="lk-hto-confirm-side">
+      <h4>How it's done</h4>
+      <p><strong>10 feet of space needed</strong></p>
+      <p>For a good eye exam, use a well-lit room with 10 feet of space.</p>
+      <p><strong>12 step eye checkup</strong></p>
+      <p>Experience store-like eye testing from the comfort of your home.</p>
+      <p><strong>Try 150+ frames</strong></p>
+      <p>Choose from Lenskart's trending and bestselling frames.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var addressNode = document.getElementById("lk-hto-confirm-address");
+    var timeNode = document.getElementById("lk-hto-confirm-time");
+    var amountNode = document.getElementById("lk-hto-confirm-amount");
+
+    var address = null;
+    var schedule = null;
+    try {
+      address = JSON.parse(localStorage.getItem("lkHtoSelectedAddress") || "null");
+      schedule = JSON.parse(localStorage.getItem("lkHtoDateTime") || "null");
+    } catch (err) {
+      address = null;
+      schedule = null;
+    }
+
+    if (addressNode) {
+      if (address) {
+        var line = [
+          address.address_line,
+          address.city,
+          address.state,
+          address.pincode,
+        ].filter(Boolean).join(", ");
+        addressNode.innerHTML =
+          "<strong>Appointment Address</strong><br>" +
+          (address.name || "") +
+          "<br>" +
+          line;
+      } else {
+        addressNode.textContent = "Appointment Address: not selected.";
+      }
+    }
+
+    if (timeNode) {
+      if (schedule) {
+        var dateLabel = schedule.date ? schedule.date : "";
+        timeNode.innerHTML =
+          "<strong>Appointment Time</strong><br>" +
+          (dateLabel ? dateLabel + " " : "") +
+          (schedule.time || "") +
+          "<br>" +
+          (schedule.people ? schedule.people + " people" : "");
+      } else {
+        timeNode.textContent = "Appointment Time: not selected.";
+      }
+    }
+
+    if (amountNode) {
+      amountNode.innerHTML =
+        "<strong>Amount to be paid after visit</strong><br>₹0";
+    }
+  });
+</script>
+{% endblock %}

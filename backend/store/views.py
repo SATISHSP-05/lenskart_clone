@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator
 from django.db.models import Q
-from .models import Banner, Brand, Category, Product
+from .models import Banner, Brand, Category, Product, HtoAddress
 
 
 def home_view(request):
@@ -322,10 +322,13 @@ def product_search_view(request):
 
     brand_slug = request.GET.get("brand")
     shape = request.GET.get("shape")
+    gender = request.GET.get("gender")
     if brand_slug:
         products = products.filter(brand__slug=brand_slug)
     if shape:
         products = products.filter(shape=shape)
+    if gender:
+        products = products.filter(gender=gender)
 
     products = products.order_by("id")
 
@@ -339,6 +342,7 @@ def product_search_view(request):
         'brands': Brand.objects.filter(active=True),
         'selected_brand': brand_slug,
         'selected_shape': shape,
+        'selected_gender': gender,
         'shape_choices': Product.SHAPE_CHOICES,
     }
     return render(request, 'store/search_results.html', context)
@@ -350,3 +354,42 @@ def cart_view(request):
 
 def around_view(request):
     return render(request, "store/around.html")
+
+
+def home_eye_test_view(request):
+    return render(request, "store/home_eye_test.html")
+
+
+def hto_address_view(request):
+    addresses = list(
+        HtoAddress.objects.all().values(
+            "id",
+            "name",
+            "phone",
+            "address_line",
+            "city",
+            "state",
+            "pincode",
+        )
+    )
+    return render(request, "store/hto_address.html", {"addresses": addresses})
+
+
+def hto_new_location_view(request):
+    return render(request, "store/hto_new_location.html")
+
+
+def hto_location_unavailable_view(request):
+    return render(request, "store/hto_location_unavailable.html")
+
+
+def hto_explore_frames_view(request):
+    return render(request, "store/hto_explore_frames.html")
+
+
+def hto_date_time_view(request):
+    return render(request, "store/hto_date_time.html")
+
+
+def hto_confirm_view(request):
+    return render(request, "store/hto_confirm.html")

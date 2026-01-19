@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home Eye Test - Date & Time{% endblock %}
+
+{% block extra_head %}
+<style>
+  .lk-topbar,
+  .lk-header,
+  .lk-nav {
+    display: none;
+  }
+  .lk-hto-flow {
+    max-width: 620px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e6e6f2;
+    border-radius: 16px;
+    padding: 18px;
+  }
+  .lk-hto-steps {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    color: #a0a0b3;
+    border-bottom: 1px solid #ececf5;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .lk-hto-step {
+    font-weight: 600;
+  }
+  .lk-hto-step.active {
+    color: #1f1f4a;
+  }
+  .lk-hto-address-summary {
+    font-size: 12px;
+    color: #6b6b86;
+    margin-bottom: 12px;
+  }
+  .lk-hto-address-summary strong {
+    color: #1f1f4a;
+  }
+  .lk-hto-section {
+    margin-bottom: 14px;
+  }
+  .lk-hto-section-title {
+    font-size: 12px;
+    color: #1f1f4a;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .lk-hto-chip-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .lk-hto-chip {
+    border: 1px solid #d8d8ef;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    background: #fff;
+    min-width: 64px;
+    text-align: center;
+  }
+  .lk-hto-chip.active {
+    border-color: #0b0a4a;
+    background: #f2f3ff;
+    font-weight: 600;
+    color: #0b0a4a;
+  }
+  .lk-hto-footer {
+    margin-top: 18px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lk-hto-page">
+  <div class="lk-hto-topbar">
+    <img src="/media/home%20test%20svg/Lenskart_20at_20home.svg" alt="Lenskart at Home">
+    <div class="lk-hto-phone">+919021340340</div>
+  </div>
+
+  <div class="lk-hto-flow">
+    <div class="lk-hto-steps">
+      <span class="lk-hto-step">Login/Signup</span>
+      <span class="lk-hto-step">Address</span>
+      <span class="lk-hto-step active">Date &amp; Time</span>
+      <span class="lk-hto-step">Confirm Appointment</span>
+    </div>
+
+    <div class="lk-hto-address-summary" id="lk-hto-address-summary"></div>
+
+    <div class="lk-hto-section">
+      <div class="lk-hto-section-title">Select Number of People for Eye Check-up</div>
+      <div class="lk-hto-chip-group" id="lk-hto-people">
+        <button class="lk-hto-chip" data-value="1" type="button">1</button>
+        <button class="lk-hto-chip" data-value="2" type="button">2</button>
+        <button class="lk-hto-chip" data-value="3" type="button">3</button>
+        <button class="lk-hto-chip" data-value="4" type="button">4</button>
+      </div>
+    </div>
+
+    <div class="lk-hto-section">
+      <div class="lk-hto-section-title">Choose a Date</div>
+      <div class="lk-hto-chip-group" id="lk-hto-dates"></div>
+    </div>
+
+    <div class="lk-hto-section">
+      <div class="lk-hto-section-title">Time</div>
+      <div class="lk-hto-chip-group" id="lk-hto-times"></div>
+    </div>
+
+    <div class="lk-hto-footer">
+      <a class="lk-hto-btn lk-hto-btn-dark" id="lk-hto-date-proceed" href="{% url 'hto_confirm' %}">Continue</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var addressSummary = document.getElementById("lk-hto-address-summary");
+    var storedAddress = localStorage.getItem("lkHtoSelectedAddress");
+    if (addressSummary) {
+      if (storedAddress) {
+        try {
+          var addr = JSON.parse(storedAddress);
+          var line = [
+            addr.address_line,
+            addr.city,
+            addr.state,
+            addr.pincode,
+          ].filter(Boolean).join(", ");
+          addressSummary.innerHTML =
+            "<strong>" +
+            (addr.name || "Selected Address") +
+            "</strong><br>" +
+            line;
+        } catch (err) {
+          addressSummary.textContent = "Select an address to proceed.";
+        }
+      } else {
+        addressSummary.textContent = "Select an address to proceed.";
+      }
+    }
+
+    function activateGroup(groupId, value) {
+      var group = document.getElementById(groupId);
+      if (!group) return;
+      group.querySelectorAll(".lk-hto-chip").forEach(function (chip) {
+        chip.classList.toggle("active", chip.getAttribute("data-value") === value);
+      });
+    }
+
+    function generateDates() {
+      var list = document.getElementById("lk-hto-dates");
+      if (!list) return;
+      var today = new Date();
+      for (var i = 0; i < 4; i += 1) {
+        var date = new Date(today);
+        date.setDate(today.getDate() + i);
+        var day = date.toLocaleDateString("en-IN", { weekday: "short" });
+        var dayNum = date.getDate();
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "lk-hto-chip";
+        btn.setAttribute("data-value", date.toISOString().slice(0, 10));
+        btn.innerHTML = "<div>" + day + "</div><div>" + dayNum + "</div>";
+        list.appendChild(btn);
+      }
+    }
+
+    function generateTimes() {
+      var list = document.getElementById("lk-hto-times");
+      if (!list) return;
+      var times = [
+        "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM",
+        "12:30 PM", "01:00 PM", "01:30 PM", "02:00 PM",
+        "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM",
+        "04:30 PM", "05:00 PM", "05:30 PM", "06:00 PM",
+        "06:30 PM", "07:00 PM", "08:30 PM"
+      ];
+      times.forEach(function (time) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "lk-hto-chip";
+        btn.textContent = time;
+        btn.setAttribute("data-value", time);
+        list.appendChild(btn);
+      });
+    }
+
+    generateDates();
+    generateTimes();
+
+    var groups = ["lk-hto-people", "lk-hto-dates", "lk-hto-times"];
+    groups.forEach(function (groupId) {
+      var group = document.getElementById(groupId);
+      if (!group) return;
+      group.addEventListener("click", function (event) {
+        var target = event.target.closest(".lk-hto-chip");
+        if (!target) return;
+        activateGroup(groupId, target.getAttribute("data-value"));
+      });
+    });
+
+    var saved = localStorage.getItem("lkHtoDateTime");
+    if (saved) {
+      try {
+        var parsed = JSON.parse(saved);
+        if (parsed.people) activateGroup("lk-hto-people", parsed.people);
+        if (parsed.date) activateGroup("lk-hto-dates", parsed.date);
+        if (parsed.time) activateGroup("lk-hto-times", parsed.time);
+      } catch (err) {
+        // ignore
+      }
+    }
+
+    var proceed = document.getElementById("lk-hto-date-proceed");
+    if (proceed) {
+      proceed.addEventListener("click", function (event) {
+        var selection = {
+          people: document.querySelector("#lk-hto-people .lk-hto-chip.active")?.getAttribute("data-value") || "",
+          date: document.querySelector("#lk-hto-dates .lk-hto-chip.active")?.getAttribute("data-value") || "",
+          time: document.querySelector("#lk-hto-times .lk-hto-chip.active")?.getAttribute("data-value") || "",
+        };
+        if (!selection.people || !selection.date || !selection.time) {
+          event.preventDefault();
+          alert("Please select people, date, and time.");
+          return;
+        }
+        localStorage.setItem("lkHtoDateTime", JSON.stringify(selection));
+      });
+    }
+  });
+</script>
+{% endblock %}

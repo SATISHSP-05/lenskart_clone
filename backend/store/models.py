@@ -144,3 +144,19 @@ class Banner(models.Model):
 
     def __str__(self):
         return self.title if self.title else f"Banner {self.id}"
+
+
+class HtoAddress(models.Model):
+    name = models.CharField(max_length=120)
+    phone = models.CharField(max_length=30)
+    address_line = models.CharField(max_length=255)
+    city = models.CharField(max_length=120)
+    state = models.CharField(max_length=120)
+    pincode = models.CharField(max_length=20)
+    is_default = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-is_default", "id"]
+
+    def __str__(self):
+        return f"{self.name} - {self.city}"

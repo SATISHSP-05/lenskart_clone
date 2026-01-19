@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home Eye-Test{% endblock %}
+
+{% block extra_head %}
+<style>
+  .lk-topbar,
+  .lk-header,
+  .lk-nav {
+    display: none;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lk-hto-page">
+  <div class="lk-hto-topbar">
+    <img src="/media/home%20test%20svg/Lenskart_20at_20home.svg" alt="Lenskart at Home">
+    <div class="lk-hto-phone">+919021340340</div>
+  </div>
+
+  <section class="lk-hto-card" id="book-appointment">
+    <div class="lk-hto-card-media">
+      <div id="lkHtoHeroCarousel" class="carousel slide lk-hto-carousel" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="/media/home%20test%20svg/1.png" alt="Home Eye Test">
+          </div>
+          <div class="carousel-item">
+            <img src="/media/home%20test%20svg/2.png" alt="Home Eye Test">
+          </div>
+          <div class="carousel-item">
+            <img src="/media/home%20test%20svg/3.png" alt="Home Eye Test">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="lk-hto-card-body">
+      <div class="lk-hto-card-title">Lenskart at Home</div>
+      <div class="lk-hto-card-sub">Eye Test &amp; Frame Trial Service</div>
+      <div class="lk-hto-rating">
+        <span class="lk-hto-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <span>4.9 (17k)</span>
+      </div>
+      <div class="lk-hto-section-title">Eye test eligibility</div>
+      <ul class="lk-hto-list">
+        <li><img src="/media/home%20test%20svg/CheckGreen.svg" alt="">A well-lit room with 10 ft space is required</li>
+        <li><img src="/media/home%20test%20svg/CheckGreen.svg" alt="">Required age for eye test is 14 - 75 years</li>
+        <li><img src="/media/home%20test%20svg/CrossRed.svg" alt="">Not for Diabetics or those with High BP (Clinical eye test is required)</li>
+      </ul>
+      <div class="lk-hto-section-title">What to expect?</div>
+      <ul class="lk-hto-list">
+        <li><img src="/media/home%20test%20svg/12step_Desktop.svg" alt="">12 Step Eye Checkup by certified professionals</li>
+        <li><img src="/media/home%20test%20svg/EyeWithTorch.svg" alt="">Latest Eye Test Equipments</li>
+        <li><img src="/media/home%20test%20svg/Glasses.svg" alt="">Try 150+ frames at home</li>
+      </ul>
+      <div class="lk-hto-price">
+        <span class="lk-hto-price-label">Lenskart at Home</span>
+        <span class="lk-hto-price-strike">&#8377;120</span>
+        <span class="lk-hto-price-now">&#8377;99</span>
+      </div>
+      <a class="lk-hto-btn lk-hto-btn-dark" href="{% url 'hto_address' %}">BOOK APPOINTMENT</a>
+    </div>
+  </section>
+
+  <section class="lk-hto-signs">
+    <div class="lk-hto-signs-title">
+      <span class="lk-hto-signs-number">6</span>
+      <div>
+        <div>Signs you</div>
+        <div>need an eyetest</div>
+      </div>
+    </div>
+    <div class="lk-hto-signs-grid">
+      <div class="lk-hto-sign">
+        <img src="/media/home%20test%20svg/Person.svg" alt="">
+        <span>Frequent Neck Pain</span>
+      </div>
+      <div class="lk-hto-sign">
+        <img src="/media/home%20test%20svg/PersonTwo.svg" alt="">
+        <span>Frequent Headaches</span>
+      </div>
+      <div class="lk-hto-sign">
+        <img src="/media/home%20test%20svg/A_char.svg" alt="">
+        <span>Difficulty Reading</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lk-hto-faq">
+    <h3>FAQs About Home Eye Tests</h3>
+    <div class="accordion" id="lkHomeTestFaq">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="htoFaq1">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#htoFaqBody1">
+            What is Lenskart Home Eye Test?
+          </button>
+        </h2>
+        <div id="htoFaqBody1" class="accordion-collapse collapse show" data-bs-parent="#lkHomeTestFaq">
+          <div class="accordion-body">
+            A complete eye test done at your doorstep by certified professionals with modern equipment.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="htoFaq2">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#htoFaqBody2">
+            Why should I opt for the Lenskart Home Eye Test?
+          </button>
+        </h2>
+        <div id="htoFaqBody2" class="accordion-collapse collapse" data-bs-parent="#lkHomeTestFaq">
+          <div class="accordion-body">
+            It saves time, offers professional eye testing at home, and lets you try frames during the visit.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="htoFaq3">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#htoFaqBody3">
+            What cities is this service available in?
+          </button>
+        </h2>
+        <div id="htoFaqBody3" class="accordion-collapse collapse" data-bs-parent="#lkHomeTestFaq">
+          <div class="accordion-body">
+            Service availability depends on your pincode. Use the appointment flow to check coverage.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="htoFaq4">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#htoFaqBody4">
+            How much does the Lenskart Home Eye Check-up cost?
+          </button>
+        </h2>
+        <div id="htoFaqBody4" class="accordion-collapse collapse" data-bs-parent="#lkHomeTestFaq">
+          <div class="accordion-body">
+            Pricing is shown during booking. Offers may apply for members.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

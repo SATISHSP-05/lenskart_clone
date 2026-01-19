@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home Eye Test - New Address{% endblock %}
+
+{% block extra_head %}
+<style>
+  .lk-topbar,
+  .lk-header,
+  .lk-nav {
+    display: none;
+  }
+  .lk-hto-flow {
+    max-width: 520px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e6e6f2;
+    border-radius: 16px;
+    padding: 18px;
+  }
+  .lk-hto-steps {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    color: #a0a0b3;
+    border-bottom: 1px solid #ececf5;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .lk-hto-step {
+    font-weight: 600;
+  }
+  .lk-hto-step.active {
+    color: #1f1f4a;
+  }
+  .lk-hto-panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1f1f4a;
+    margin-bottom: 12px;
+  }
+  .lk-hto-search {
+    position: relative;
+  }
+  .lk-hto-search input {
+    width: 100%;
+    border: 1px solid #d8d8ef;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+  .lk-hto-use-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1f1f4a;
+    margin: 12px 0 10px;
+  }
+  .lk-hto-map {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e6e6f2;
+  }
+  .lk-hto-map iframe {
+    width: 100%;
+    height: 240px;
+    border: 0;
+    display: block;
+  }
+  .lk-hto-map-overlay {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(11, 10, 74, 0.92);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .lk-hto-form {
+    margin-top: 14px;
+    border-top: 1px solid #ececf5;
+    padding-top: 14px;
+  }
+  .lk-hto-form label {
+    font-size: 11px;
+    color: #6b6b86;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .lk-hto-form input,
+  .lk-hto-form textarea {
+    width: 100%;
+    border: 1px solid #d8d8ef;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  .lk-hto-form textarea {
+    resize: vertical;
+    min-height: 64px;
+  }
+  .lk-hto-save {
+    width: 100%;
+  }
+  .lk-hto-flow-footer {
+    margin-top: 18px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lk-hto-page">
+  <div class="lk-hto-topbar">
+    <img src="/media/home%20test%20svg/Lenskart_20at_20home.svg" alt="Lenskart at Home">
+    <div class="lk-hto-phone">+919021340340</div>
+  </div>
+
+  <div class="lk-hto-flow">
+    <div class="lk-hto-steps">
+      <span class="lk-hto-step">Login/Signup</span>
+      <span class="lk-hto-step active">Address</span>
+      <span class="lk-hto-step">Date &amp; Time</span>
+      <span class="lk-hto-step">Confirm Appointment</span>
+    </div>
+
+    <div class="lk-hto-panel-title">Add Address</div>
+    <div class="lk-hto-search">
+      <input type="text" id="lk-location-search" placeholder="Search to change your selected location">
+    </div>
+
+    <div class="lk-hto-use-location">
+      <span>&bull;</span>
+      <span>Use Current Location</span>
+    </div>
+
+    <div class="lk-hto-map">
+      <iframe
+        id="lk-location-map"
+        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAj6ie6g8OdhA8UXpQiJi9X3hHLUQIpm0U&q=Bengaluru%2C%20India"
+        title="Google map"
+      ></iframe>
+      <div class="lk-hto-map-overlay">Location Missing - Allow location access</div>
+    </div>
+
+    <div class="lk-hto-form" id="lk-hto-save-form">
+      <label for="lk-hto-name">Name</label>
+      <input id="lk-hto-name" type="text" placeholder="Full name">
+      <label for="lk-hto-phone">Phone</label>
+      <input id="lk-hto-phone" type="tel" placeholder="Phone number">
+      <label for="lk-hto-address">Address</label>
+      <textarea id="lk-hto-address" placeholder="Address line"></textarea>
+      <label for="lk-hto-city">City</label>
+      <input id="lk-hto-city" type="text" placeholder="City">
+      <label for="lk-hto-state">State</label>
+      <input id="lk-hto-state" type="text" placeholder="State">
+      <label for="lk-hto-pincode">Pincode</label>
+      <input id="lk-hto-pincode" type="text" placeholder="Pincode">
+      <button class="lk-hto-btn lk-hto-btn-dark lk-hto-save" id="lk-hto-save-btn" type="button">
+        Save Address
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function initLkPlaces() {
+    var input = document.getElementById("lk-location-search");
+    var mapFrame = document.getElementById("lk-location-map");
+    var addressInput = document.getElementById("lk-hto-address");
+    var cityInput = document.getElementById("lk-hto-city");
+    var stateInput = document.getElementById("lk-hto-state");
+    var pinInput = document.getElementById("lk-hto-pincode");
+    if (!input || !window.google || !google.maps || !google.maps.places) return;
+
+    var autocomplete = new google.maps.places.Autocomplete(input, {
+      types: ["geocode"],
+      fields: ["name", "formatted_address", "geometry", "place_id", "address_components"],
+    });
+
+    autocomplete.addListener("place_changed", function () {
+      var place = autocomplete.getPlace();
+      if (!place) return;
+      var label = place.formatted_address || place.name;
+      if (label) {
+        input.value = label;
+      }
+      if (place.address_components) {
+        var components = place.address_components;
+        var getType = function (type) {
+          var match = components.find(function (comp) {
+            return comp.types && comp.types.indexOf(type) !== -1;
+          });
+          return match ? match.long_name : "";
+        };
+        if (addressInput) {
+          addressInput.value = label || "";
+        }
+        if (cityInput) {
+          cityInput.value = getType("locality") || getType("administrative_area_level_2");
+        }
+        if (stateInput) {
+          stateInput.value = getType("administrative_area_level_1");
+        }
+        if (pinInput) {
+          pinInput.value = getType("postal_code");
+        }
+      }
+      if (!mapFrame) return;
+      var query = "";
+      if (place.place_id) {
+        query = "place_id:" + place.place_id;
+      } else if (label) {
+        query = label;
+      }
+      if (!query) return;
+      mapFrame.src =
+        "https://www.google.com/maps/embed/v1/place?key=AIzaSyAj6ie6g8OdhA8UXpQiJi9X3hHLUQIpm0U&q=" +
+        encodeURIComponent(query);
+    });
+  }
+</script>
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAj6ie6g8OdhA8UXpQiJi9X3hHLUQIpm0U&libraries=places&callback=initLkPlaces"
+  async
+  defer
+></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var saveBtn = document.getElementById("lk-hto-save-btn");
+    if (!saveBtn) return;
+    saveBtn.addEventListener("click", function () {
+      var name = (document.getElementById("lk-hto-name").value || "").trim();
+      var phone = (document.getElementById("lk-hto-phone").value || "").trim();
+      var addressLine = (document.getElementById("lk-hto-address").value || "").trim();
+      var city = (document.getElementById("lk-hto-city").value || "").trim();
+      var state = (document.getElementById("lk-hto-state").value || "").trim();
+      var pincode = (document.getElementById("lk-hto-pincode").value || "").trim();
+
+      if (!name || !phone || !addressLine || !city || !state || !pincode) {
+        alert("Please fill all address fields.");
+        return;
+      }
+
+      var payload = {
+        name: name,
+        phone: phone,
+        address_line: addressLine,
+        city: city,
+        state: state,
+        pincode: pincode,
+      };
+
+      var existing = [];
+      try {
+        existing = JSON.parse(localStorage.getItem("lkHtoAddresses") || "[]");
+      } catch (err) {
+        existing = [];
+      }
+      existing.unshift(payload);
+      localStorage.setItem("lkHtoAddresses", JSON.stringify(existing));
+      localStorage.setItem("lkHtoSelectedAddress", JSON.stringify(payload));
+      window.location.href = "{% url 'hto_address' %}";
+    });
+  });
+</script>
+{% endblock %}

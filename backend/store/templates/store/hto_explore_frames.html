@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Find a Store Near You{% endblock %}
+
+{% block extra_head %}
+<style>
+  .lk-store-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 24px 40px;
+  }
+  .lk-store-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .lk-store-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f1f4a;
+    margin-bottom: 4px;
+  }
+  .lk-store-sub {
+    color: #6b6b86;
+    font-size: 13px;
+  }
+  .lk-store-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .lk-store-search input {
+    width: 320px;
+    max-width: 100%;
+    border: 1px solid #d8d8ef;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .lk-store-btn {
+    border: 1px solid #1f1f4a;
+    color: #1f1f4a;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #fff;
+    text-decoration: none;
+  }
+  .lk-store-count {
+    font-size: 12px;
+    color: #1f1f4a;
+    font-weight: 600;
+    margin: 8px 0 12px;
+  }
+  .lk-store-layout {
+    display: grid;
+    grid-template-columns: 1.05fr 1.35fr;
+    gap: 18px;
+    margin-top: 18px;
+  }
+  .lk-store-list {
+    border: 1px solid #e6e6f2;
+    border-radius: 14px;
+    padding: 14px;
+    background: #fff;
+    max-height: calc(100vh - 240px);
+    overflow-y: auto;
+  }
+  .lk-store-card {
+    border: 1px solid #e6e6f2;
+    border-radius: 12px;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+    background: #fff;
+  }
+  .lk-store-thumb {
+    width: 92px;
+    height: 92px;
+    border-radius: 10px;
+    background: #f5f6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #1f1f4a;
+    font-size: 11px;
+    text-align: center;
+  }
+  .lk-store-name {
+    font-weight: 700;
+    color: #1f1f4a;
+    font-size: 13px;
+  }
+  .lk-store-meta {
+    font-size: 11px;
+    color: #6b6b86;
+    margin: 4px 0;
+  }
+  .lk-store-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .lk-store-actions a {
+    border: 1px solid #1f1f4a;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 11px;
+    text-decoration: none;
+    color: #1f1f4a;
+    font-weight: 600;
+  }
+  .lk-store-actions a.primary {
+    background: #0b0a4a;
+    color: #fff;
+    border-color: #0b0a4a;
+  }
+  .lk-store-banner {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #e6e6f2;
+    margin: 10px 0 16px;
+  }
+  .lk-store-banner img {
+    width: 100%;
+    display: block;
+  }
+  .lk-store-banner-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .lk-store-banner-grid img {
+    width: 100%;
+    border-radius: 12px;
+    display: block;
+    border: 1px solid #e6e6f2;
+  }
+  .lk-store-map {
+    border: 1px solid #e6e6f2;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    position: sticky;
+    top: 20px;
+    height: calc(100vh - 160px);
+    min-height: 520px;
+  }
+  .lk-store-map iframe,
+  .lk-store-map #lkStoresMap {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  .lk-store-empty {
+    padding: 14px;
+    border: 1px dashed #e0e0ef;
+    border-radius: 12px;
+    color: #6b6b86;
+    font-size: 12px;
+    text-align: center;
+  }
+  @media (max-width: 991px) {
+    .lk-store-layout {
+      grid-template-columns: 1fr;
+    }
+    .lk-store-map {
+      position: static;
+      height: 360px;
+      min-height: 360px;
+    }
+    .lk-store-list {
+      max-height: none;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lk-store-wrap">
+  <div class="lk-store-head">
+    <div>
+      <div class="lk-store-title">Find a Store Near You</div>
+      <div class="lk-store-sub">Get free eye test and eye checkup by trained optometrist and eye specialist</div>
+    </div>
+    <div class="lk-store-search">
+      <input id="lk-store-search" type="text" placeholder="Search by State/Pincode/Locality">
+      <button id="lk-store-geolocate" class="lk-store-btn" type="button">Use My Current Location</button>
+    </div>
+  </div>
+
+  <div class="lk-store-layout">
+    <div class="lk-store-list">
+      <div class="lk-store-banner-grid">
+        <img src="https://www.lenskart.com/stores/_next/image?url=https%3A%2F%2Fweb-store.lenskart.com%2Foffers%2F17592742245034.bitz11.png&w=640&q=75" alt="Lenskart offer banner 1">
+        <img src="https://www.lenskart.com/stores/_next/image?url=https%3A%2F%2Fweb-store.lenskart.com%2Foffers%2F17489366309759.harrypotter-store-locator.png&w=640&q=75" alt="Lenskart offer banner 2">
+        <img src="https://www.lenskart.com/stores/_next/image?url=https%3A%2F%2Fweb-store.lenskart.com%2Foffers%2F17592738647876.ndd1.png&w=640&q=75" alt="Lenskart offer banner 3">
+        <img src="https://www.lenskart.com/stores/_next/image?url=https%3A%2F%2Fweb-store.lenskart.com%2Foffers%2F17665479308973.mellersl.png&w=640&q=75" alt="Lenskart offer banner 4">
+      </div>
+
+      <div class="lk-store-count" id="lk-store-count">Searching near you...</div>
+      <div id="lk-store-results"></div>
+    </div>
+
+    <div class="lk-store-map">
+      <div id="lkStoresMap" aria-label="Store map"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  var lkMap;
+  var lkService;
+  var lkMarkers = [];
+  var lkInfoWindow;
+
+  function initStoresMap() {
+    var defaultCenter = { lat: 28.6139, lng: 77.2090 };
+    lkMap = new google.maps.Map(document.getElementById("lkStoresMap"), {
+      center: defaultCenter,
+      zoom: 12,
+      mapTypeControl: true,
+      streetViewControl: false,
+      fullscreenControl: true,
+    });
+    lkInfoWindow = new google.maps.InfoWindow();
+    lkService = new google.maps.places.PlacesService(lkMap);
+
+    var input = document.getElementById("lk-store-search");
+    var button = document.getElementById("lk-store-geolocate");
+    var autocomplete = new google.maps.places.Autocomplete(input, {
+      types: ["geocode"],
+    });
+
+    autocomplete.addListener("place_changed", function () {
+      var place = autocomplete.getPlace();
+      if (place && place.geometry && place.geometry.location) {
+        lkMap.setCenter(place.geometry.location);
+        lkMap.setZoom(13);
+        searchNearby(place.geometry.location);
+      } else if (input.value) {
+        textSearch(input.value);
+      }
+    });
+
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (input.value) {
+          textSearch(input.value);
+        }
+      }
+    });
+
+    if (button) {
+      button.addEventListener("click", function () {
+        if (!navigator.geolocation) return;
+        button.disabled = true;
+        navigator.geolocation.getCurrentPosition(
+          function (pos) {
+            button.disabled = false;
+            var location = {
+              lat: pos.coords.latitude,
+              lng: pos.coords.longitude,
+            };
+            lkMap.setCenter(location);
+            lkMap.setZoom(13);
+            searchNearby(location);
+          },
+          function () {
+            button.disabled = false;
+          }
+        );
+      });
+    }
+
+    searchNearby(defaultCenter);
+  }
+
+  function clearMarkers() {
+    lkMarkers.forEach(function (marker) {
+      marker.setMap(null);
+    });
+    lkMarkers = [];
+  }
+
+  function searchNearby(location) {
+    if (!lkService) return;
+    lkService.nearbySearch(
+      {
+        location: location,
+        radius: 7000,
+        keyword: "Lenskart",
+      },
+      handlePlacesResult
+    );
+  }
+
+  function textSearch(query) {
+    if (!lkService) return;
+    lkService.textSearch(
+      {
+        query: "Lenskart " + query,
+      },
+      handlePlacesResult
+    );
+  }
+
+  function handlePlacesResult(results, status) {
+    var list = document.getElementById("lk-store-results");
+    var count = document.getElementById("lk-store-count");
+    if (!list || !count) return;
+    list.innerHTML = "";
+    clearMarkers();
+
+    if (status !== google.maps.places.PlacesServiceStatus.OK || !results || !results.length) {
+      count.textContent = "No stores found near this location.";
+      list.innerHTML = '<div class="lk-store-empty">Try another city or pincode.</div>';
+      return;
+    }
+
+    count.textContent = results.length + " stores providing free eye test near you";
+
+    var bounds = new google.maps.LatLngBounds();
+    results.forEach(function (place, index) {
+      if (!place.geometry || !place.geometry.location) return;
+      var marker = new google.maps.Marker({
+        map: lkMap,
+        position: place.geometry.location,
+        label: {
+          text: String(index + 1),
+          color: "#fff",
+          fontSize: "11px",
+          fontWeight: "700",
+        },
+        icon: {
+          path: "M12 2c-3.9 0-7 3.1-7 7 0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3.1-7-7-7zm0 9.2c-1.2 0-2.2-1-2.2-2.2S10.8 6.8 12 6.8s2.2 1 2.2 2.2S13.2 11.2 12 11.2z",
+          fillColor: "#0b0a4a",
+          fillOpacity: 1,
+          strokeWeight: 0,
+          scale: 1.4,
+          labelOrigin: new google.maps.Point(12, 9),
+        },
+      });
+      marker.addListener("click", function () {
+        lkInfoWindow.setContent(
+          '<div style="font-size:12px;font-weight:600;color:#1f1f4a;">' +
+            place.name +
+            "</div><div style='font-size:11px;color:#6b6b86;'>" +
+            (place.vicinity || "") +
+            "</div>"
+        );
+        lkInfoWindow.open(lkMap, marker);
+      });
+      lkMarkers.push(marker);
+      bounds.extend(place.geometry.location);
+
+      var photo = "";
+      if (place.photos && place.photos.length) {
+        photo = place.photos[0].getUrl({ maxWidth: 120, maxHeight: 120 });
+      }
+      var rating = place.rating ? "★ " + place.rating : "";
+      var openNow =
+        place.opening_hours && place.opening_hours.isOpen
+          ? place.opening_hours.isOpen()
+            ? "Open Now"
+            : "Closed"
+          : "";
+      var directions = place.place_id
+        ? "https://www.google.com/maps/dir/?api=1&destination_place_id=" + place.place_id
+        : "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(place.name);
+
+      var card = document.createElement("div");
+      card.className = "lk-store-card";
+      card.innerHTML =
+        '<div class="lk-store-thumb">' +
+        (photo
+          ? '<img src="' + photo + '" alt="' + place.name + '" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">'
+          : "Lenskart") +
+        "</div>" +
+        '<div><div class="lk-store-name">' +
+        place.name +
+        "</div>" +
+        '<div class="lk-store-meta">' +
+        (place.vicinity || "") +
+        "</div>" +
+        '<div class="lk-store-meta">' +
+        [rating, openNow].filter(Boolean).join(" • ") +
+        "</div>" +
+        '<div class="lk-store-actions">' +
+        '<a href="' + directions + '" target="_blank" rel="noopener">0 Km. Direction</a>' +
+        '<a class="primary" href="#" onclick="return false;">Book Free Appointment</a>' +
+        "</div></div>";
+      list.appendChild(card);
+    });
+
+    lkMap.fitBounds(bounds);
+  }
+</script>
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAj6ie6g8OdhA8UXpQiJi9X3hHLUQIpm0U&libraries=places&callback=initStoresMap"
+  async
+  defer
+></script>
+{% endblock %}

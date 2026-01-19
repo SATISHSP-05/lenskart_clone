@@ -73,9 +73,24 @@
             <div class="lk-subcat">
               <h6>Select Category</h6>
               <ul>
-                <li><a href="{% url 'category' 'eyeglasses' %}?gender=men">Men</a></li>
-                <li><a href="{% url 'category' 'eyeglasses' %}?gender=women">Women</a></li>
-                <li><a href="{% url 'category' 'eyeglasses' %}?gender=kids">Kids</a></li>
+                <li>
+                  <a class="lk-subcat-link" href="{% url 'category' 'eyeglasses' %}?gender=men">
+                    <img src="/media/products/88400000552_-_Copy_-_Copy.png" alt="Men">
+                    <span>Men</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="lk-subcat-link" href="{% url 'category' 'eyeglasses' %}?gender=women">
+                    <img src="/media/products/88400000585%20-%20Copy%20-%20Copy.png" alt="Women">
+                    <span>Women</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="lk-subcat-link" href="{% url 'category' 'eyeglasses' %}?gender=kids">
+                    <img src="/media/products/88400000420%20-%20Copy%20-%20Copy.png" alt="Kids">
+                    <span>Kids</span>
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
@@ -126,9 +141,24 @@
             <div class="lk-subcat">
               <h6>Select Category</h6>
               <ul>
-                <li><a href="{% url 'product_search' %}?q=screen%20glasses%20men">Men</a></li>
-                <li><a href="{% url 'product_search' %}?q=screen%20glasses%20women">Women</a></li>
-                <li><a href="{% url 'product_search' %}?q=screen%20glasses%20kids">Kids</a></li>
+                <li>
+                  <a class="lk-subcat-link" href="{% url 'product_search' %}?q=screen%20glasses&gender=men">
+                    <img src="/media/products/88400000552_-_Copy_-_Copy.png" alt="Men">
+                    <span>Men</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="lk-subcat-link" href="{% url 'product_search' %}?q=screen%20glasses&gender=women">
+                    <img src="/media/products/88400000585%20-%20Copy%20-%20Copy.png" alt="Women">
+                    <span>Women</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="lk-subcat-link" href="{% url 'product_search' %}?q=screen%20glasses&gender=kids">
+                    <img src="/media/products/88400000420%20-%20Copy%20-%20Copy.png" alt="Kids">
+                    <span>Kids</span>
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
@@ -167,45 +197,22 @@
       </div>
 
       <div class="lk-nav-item">
-        <a href="{% url 'category' 'kids' %}">KIDS GLASSES</a>
-        <div class="lk-mega">
-          <div class="lk-mega-inner container-fluid">
-            <div class="lk-subcat">
-              <h6>Select Category</h6>
-              <ul>
-                <li><a href="{% url 'category' 'kids' %}">Eyeglasses</a></li>
-                <li><a href="{% url 'product_search' %}?q=zero%20power%20kids%20glasses">Zero Power Screen Glasses</a></li>
-                <li><a href="{% url 'category' 'sunglasses' %}?gender=kids">Sunglasses</a></li>
-              </ul>
-            </div>
-            <div>
-              <h6>Top Picks</h6>
-              <ul>
-                <li><a href="{% url 'product_search' %}?q=flexible%20frames%20kids">Flexible Frames</a></li>
-                <li><a href="{% url 'product_search' %}?q=lightweight%20frames%20kids">Lightweight Frames</a></li>
-              </ul>
-            </div>
-            <div>
-              <h6>Shapes</h6>
-              <ul>
-                <li><a href="{% url 'category' 'kids' %}?shape=round">Round</a></li>
-                <li><a href="{% url 'category' 'kids' %}?shape=square">Square</a></li>
-                <li><a href="{% url 'category' 'kids' %}?shape=rectangle">Rectangle</a></li>
-              </ul>
-            </div>
-            <div>
-              <h6>Brands</h6>
-              <ul>
-                <li><a href="{% url 'product_search' %}?q=lenskart%20junior">Lenskart Junior</a></li>
-                <li><a href="{% url 'product_search' %}?q=hustlr%20kids">Hustlr</a></li>
-              </ul>
-            </div>
-            <div>
-              <h6>Collection</h6>
-              <ul>
-                <li><a href="{% url 'product_search' %}?q=cartoon%20edition">Cartoon Edition</a></li>
-                <li><a href="{% url 'product_search' %}?q=school%20ready">School Ready</a></li>
-              </ul>
+        <a href="{% url 'product_search' %}?q=kids">KIDS GLASSES</a>
+        <div class="lk-mega lk-mega-kids">
+          <div class="lk-mega-inner lk-mega-kids container-fluid">
+            <div class="lk-kids-menu">
+              <a class="lk-kids-card" href="{% url 'category' 'eyeglasses' %}?gender=kids">
+                <img src="/media/products/88400000453%20-%20Copy%20-%20Copy.jpg" alt="Eyeglasses">
+                <span>Eyeglasses</span>
+              </a>
+              <a class="lk-kids-card" href="{% url 'product_search' %}?q=zero%20power%20screen%20glasses&gender=kids">
+                <img src="/media/products/88400000486%20-%20Copy%20-%20Copy.jpg" alt="Zero Power Screen Glasses">
+                <span>Zero Power Screen Glasses</span>
+              </a>
+              <a class="lk-kids-card" href="{% url 'category' 'sunglasses' %}?gender=kids">
+                <img src="/media/products/88400000519%20-%20Copy%20-%20Copy.jpg" alt="Sunglasses">
+                <span>Sunglasses</span>
+              </a>
             </div>
           </div>
         </div>
@@ -308,7 +315,20 @@
         </div>
       </div>
 
-      <div class="lk-nav-item"><a href="{% url 'around' %}?src=home-eye-test">HOME EYE-TEST</a></div>
+      <div class="lk-nav-item">
+        <a href="{% url 'home_eye_test' %}">HOME EYE-TEST</a>
+        <div class="lk-mega lk-hto-mega">
+          <div class="lk-mega-inner container-fluid">
+            <div class="lk-hto-mega-card">
+              <img src="/media/products/home%20testing.png" alt="Home Eye Test">
+              <div class="lk-hto-mega-body">
+                <div class="lk-hto-mega-title">Get your eyes checked at home</div>
+                <a class="lk-hto-btn" href="{% url 'home_eye_test' %}">Book appointment</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="lk-nav-item"><a href="{% url 'around' %}?src=storelocator">STORELOCATOR</a></div>
       <div class="lk-nav-item"><a href="{% url 'category' 'sale' %}">SALE</a></div>
     </div>

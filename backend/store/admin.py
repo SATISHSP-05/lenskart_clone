@@ -20,6 +20,7 @@ class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 2
     max_num = 2
+    min_num = 2
 
 
 @admin.register(Product)
