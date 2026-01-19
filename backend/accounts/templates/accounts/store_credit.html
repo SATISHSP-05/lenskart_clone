@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Store Credit{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+  <div class="lk-account">
+    {% include 'accounts/_sidebar.html' with active_tab='credits' %}
+    <div>
+      <h4 class="mb-3">Store Credit</h4>
+      {% if credits %}
+        {% for credit in credits %}
+          <div class="lk-account-card">
+            <div><strong>Code:</strong> {{ credit.code }}</div>
+            <div><strong>Balance:</strong> Rs {{ credit.balance }}</div>
+            <div><strong>Updated:</strong> {{ credit.updated_at }}</div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="lk-account-card">No store credits found.</div>
+      {% endif %}
+      <div class="lk-account-card">
+        <label class="form-label">Enter your store credit code</label>
+        <input type="text" class="form-control mb-2" placeholder="Store credit code">
+        <button class="btn btn-warning">Check Balance</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,104 +1,414 @@
 {% load static %}
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-  <div class="container-fluid">
+<div class="lk-topbar py-1">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <div class="d-flex flex-wrap align-items-center">
+      <a href="{% url 'around' %}?src=corporate">Corporate</a>
+      <a href="{% url 'around' %}?src=storelocator">StoreLocator</a>
+      <a href="{% url 'around' %}?region=singapore">Singapore</a>
+      <a href="{% url 'around' %}?region=uae">UAE</a>
+      <a href="{% url 'product_search' %}?brand=john-jacobs">John Jacobs</a>
+      <a href="{% url 'product_search' %}?q=aqualens">Aqualens</a>
+      <a href="{% url 'around' %}?src=cobrowsing">Cobrowsing</a>
+      <a href="{% url 'around' %}?src=engineering">Engineering Blog</a>
+      <a href="{% url 'around' %}?src=partner">Partner With Us</a>
+    </div>
+    <div class="fw-semibold">99998 99998</div>
+  </div>
+</div>
 
-    <!-- Logo -->
-    <a class="navbar-brand" href="{% url 'home' %}">
-      <img src="https://static.lenskart.com/media/desktop/img/site-images/main_logo.svg"
-           alt="Logo" height="35">
+<div class="lk-header py-2">
+  <div class="container-fluid d-flex align-items-center gap-3">
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+      <img src="https://static.lenskart.com/media/desktop/img/site-images/main_logo.svg" alt="Logo" height="30">
     </a>
 
-    <!-- Mobile Drawer Button -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
-      <span class="navbar-toggler-icon"></span>
+    <form class="flex-grow-1" method="GET" action="{% url 'product_search' %}">
+      <input class="lk-search" type="search" placeholder="What are you looking for?" name="q" aria-label="Search">
+    </form>
+
+    <a class="lk-pill" href="{% url 'login' %}">Track Orders</a>
+
+    {% if request.user.is_authenticated %}
+      <div class="dropdown">
+        <button class="lk-pill dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          {{ request.user.username }}
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{% url 'my_orders' %}">My Orders</a></li>
+          <li><a class="dropdown-item" href="{% url 'my_prescriptions' %}">My Prescription</a></li>
+          <li><a class="dropdown-item" href="{% url 'store_credit' %}">My Store Credit</a></li>
+          <li><a class="dropdown-item" href="{% url 'account_information' %}">Account Information</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+      </div>
+    {% else %}
+      <button class="lk-pill" type="button" data-bs-toggle="modal" data-bs-target="#lkLoginModal">Login</button>
+    {% endif %}
+
+    <button class="lk-icon-btn" type="button" aria-label="Wishlist">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/>
+      </svg>
     </button>
 
-    <!-- Desktop Navbar -->
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <a class="lk-icon-btn" href="{% url 'cart' %}" aria-label="Cart">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.6 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"></path>
+      </svg>
+    </a>
+  </div>
+</div>
 
-        <!-- Categories -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="catMenu" role="button" data-bs-toggle="dropdown">
-            Categories
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url 'category' 'men' %}">Men</a></li>
-            <li><a class="dropdown-item" href="{% url 'category' 'women' %}">Women</a></li>
-            <li><a class="dropdown-item" href="{% url 'category' 'kids' %}">Kids</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{% url 'category' 'eyeglasses' %}">Eyeglasses</a></li>
-            <li><a class="dropdown-item" href="{% url 'category' 'computer-glasses' %}">Computer Glasses</a></li>
-          </ul>
-        </li>
-
-      </ul>
-
-      <!-- Search -->
-      <form class="d-flex me-3" method="GET" action="{% url 'product_search' %}">
-        <input class="form-control" type="search" placeholder="Search..." name="q"
-               aria-label="Search">
-      </form>
-
-      <!-- Cart -->
-      <a href="{% url 'cart' %}" class="btn position-relative me-3">
-        🛒 Cart
-        {% if cart_item_count %}
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-          {{ cart_item_count }}
-        </span>
-        {% endif %}
-      </a>
-
-      <!-- Auth Buttons -->
-      {% if request.user.is_authenticated %}
-        <div class="dropdown">
-          <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-            {{ request.user.username }}
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url 'orders' %}">My Orders</a></li>
-            <li><a class="dropdown-item" href="{% url 'logout' %}">Sign Out</a></li>
-          </ul>
+<div class="lk-nav">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+    <div class="d-flex flex-wrap align-items-center">
+      <div class="lk-nav-item">
+        <a href="{% url 'category' 'eyeglasses' %}">EYEGLASSES</a>
+        <div class="lk-mega">
+          <div class="lk-mega-inner container-fluid">
+            <div class="lk-subcat">
+              <h6>Select Category</h6>
+              <ul>
+                <li><a href="{% url 'category' 'eyeglasses' %}?gender=men">Men</a></li>
+                <li><a href="{% url 'category' 'eyeglasses' %}?gender=women">Women</a></li>
+                <li><a href="{% url 'category' 'eyeglasses' %}?gender=kids">Kids</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Our Top Picks</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=new%20arrivals">New Arrivals</a></li>
+                <li><a href="{% url 'product_search' %}?q=best%20seller">Best Seller</a></li>
+                <li><a href="{% url 'product_search' %}?q=progressive%20eyeglasses">Progressive Eyeglasses</a></li>
+                <li><a href="{% url 'product_search' %}?q=blue%20light%20lenses">Blue Light Lenses</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Frame Type</h6>
+              <ul>
+                <li><a href="{% url 'shape_gender' 'rectangle' 'men' %}">Rectangle Frames</a></li>
+                <li><a href="{% url 'shape_gender' 'square' 'men' %}">Square Frames</a></li>
+                <li><a href="{% url 'shape_gender' 'round' 'men' %}">Round Frames</a></li>
+                <li><a href="{% url 'shape_gender' 'aviator' 'men' %}">Aviator Frames</a></li>
+                <li><a href="{% url 'shape_gender' 'cat-eye' 'men' %}">Cat Eye Frames</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Collection</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=harry%20potter">Harry Potter</a></li>
+                <li><a href="{% url 'product_search' %}?q=switch%20magnetic%20clip%20on">Switch Magnetic Clip On</a></li>
+                <li><a href="{% url 'product_search' %}?q=classic%20acetates">Classic Acetates</a></li>
+                <li><a href="{% url 'product_search' %}?q=urban%20edit">Urban Edit</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Brands</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?brand=vincent-chase">Vincent Chase</a></li>
+                <li><a href="{% url 'product_search' %}?brand=lenskart-air">Lenskart Air</a></li>
+                <li><a href="{% url 'product_search' %}?brand=lenskart-studio">Lenskart Studio</a></li>
+                <li><a href="{% url 'product_search' %}?brand=john-jacobs">John Jacobs</a></li>
+              </ul>
+            </div>
+          </div>
         </div>
-      {% else %}
-        <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
-        <a href="{% url 'register' %}" class="btn btn-primary">Signup</a>
-      {% endif %}
+      </div>
+
+      <div class="lk-nav-item">
+        <a href="{% url 'product_search' %}?q=screen%20glasses">SCREEN GLASSES</a>
+        <div class="lk-mega">
+          <div class="lk-mega-inner container-fluid">
+            <div class="lk-subcat">
+              <h6>Select Category</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=screen%20glasses%20men">Men</a></li>
+                <li><a href="{% url 'product_search' %}?q=screen%20glasses%20women">Women</a></li>
+                <li><a href="{% url 'product_search' %}?q=screen%20glasses%20kids">Kids</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Top Picks</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=blue%20light%20protection">Blue Light Protection</a></li>
+                <li><a href="{% url 'product_search' %}?q=anti%20glare">Anti Glare</a></li>
+                <li><a href="{% url 'product_search' %}?q=work%20from%20home">Work From Home</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Frame Type</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=full%20rim%20screen%20glasses">Full Rim</a></li>
+                <li><a href="{% url 'product_search' %}?q=half%20rim%20screen%20glasses">Half Rim</a></li>
+                <li><a href="{% url 'product_search' %}?q=rimless%20screen%20glasses">Rimless</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Brands</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=lenskart%20blu">Lenskart Blu</a></li>
+                <li><a href="{% url 'product_search' %}?brand=vincent-chase">Vincent Chase</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Explore</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=computer%20glasses">Computer Glasses</a></li>
+                <li><a href="{% url 'product_search' %}?q=gaming%20glasses">Gaming Glasses</a></li>
+                <li><a href="{% url 'product_search' %}?q=kids%20screen%20glasses">Kids Screen Glasses</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lk-nav-item">
+        <a href="{% url 'category' 'kids' %}">KIDS GLASSES</a>
+        <div class="lk-mega">
+          <div class="lk-mega-inner container-fluid">
+            <div class="lk-subcat">
+              <h6>Select Category</h6>
+              <ul>
+                <li><a href="{% url 'category' 'kids' %}">Eyeglasses</a></li>
+                <li><a href="{% url 'product_search' %}?q=zero%20power%20kids%20glasses">Zero Power Screen Glasses</a></li>
+                <li><a href="{% url 'category' 'sunglasses' %}?gender=kids">Sunglasses</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Top Picks</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=flexible%20frames%20kids">Flexible Frames</a></li>
+                <li><a href="{% url 'product_search' %}?q=lightweight%20frames%20kids">Lightweight Frames</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Shapes</h6>
+              <ul>
+                <li><a href="{% url 'category' 'kids' %}?shape=round">Round</a></li>
+                <li><a href="{% url 'category' 'kids' %}?shape=square">Square</a></li>
+                <li><a href="{% url 'category' 'kids' %}?shape=rectangle">Rectangle</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Brands</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=lenskart%20junior">Lenskart Junior</a></li>
+                <li><a href="{% url 'product_search' %}?q=hustlr%20kids">Hustlr</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Collection</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=cartoon%20edition">Cartoon Edition</a></li>
+                <li><a href="{% url 'product_search' %}?q=school%20ready">School Ready</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lk-nav-item">
+        <a href="{% url 'category' 'contact-lenses' %}">CONTACT LENSES</a>
+        <div class="lk-mega">
+          <div class="lk-mega-inner container-fluid">
+            <div class="lk-subcat">
+              <h6>Brands</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=aqualens">Aqualens</a></li>
+                <li><a href="{% url 'product_search' %}?q=bausch%20and%20lomb">Bausch and Lomb</a></li>
+                <li><a href="{% url 'product_search' %}?q=acuvue">Acuvue</a></li>
+                <li><a href="{% url 'product_search' %}?q=soflens">Soflens</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Explore by Disposability</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=daily%20contact%20lenses">Daily</a></li>
+                <li><a href="{% url 'product_search' %}?q=monthly%20contact%20lenses">Monthly</a></li>
+                <li><a href="{% url 'product_search' %}?q=yearly%20contact%20lenses">Yearly</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Explore by Power</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=spherical%20lenses">Spherical</a></li>
+                <li><a href="{% url 'product_search' %}?q=cylindrical%20lenses">Cylindrical</a></li>
+                <li><a href="{% url 'product_search' %}?q=toric%20lenses">Toric</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Explore by Color</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=brown%20contact%20lenses">Brown</a></li>
+                <li><a href="{% url 'product_search' %}?q=blue%20contact%20lenses">Blue</a></li>
+                <li><a href="{% url 'product_search' %}?q=green%20contact%20lenses">Green</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Solution</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=small%20lens%20solution">Small</a></li>
+                <li><a href="{% url 'product_search' %}?q=large%20lens%20solution">Large</a></li>
+                <li><a href="{% url 'product_search' %}?q=contact%20lens%20solution">View All Solutions</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lk-nav-item">
+        <a href="{% url 'category' 'sunglasses' %}">SUNGLASSES</a>
+        <div class="lk-mega">
+          <div class="lk-mega-inner container-fluid">
+            <div class="lk-subcat">
+              <h6>Trending</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=new%20sunglasses">New Arrivals</a></li>
+                <li><a href="{% url 'product_search' %}?q=polarized%20sunglasses">Polarized</a></li>
+                <li><a href="{% url 'product_search' %}?q=mirrored%20sunglasses">Mirrored</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Shapes</h6>
+              <ul>
+                <li><a href="{% url 'category' 'sunglasses' %}?shape=aviator">Aviator</a></li>
+                <li><a href="{% url 'category' 'sunglasses' %}?shape=round">Round</a></li>
+                <li><a href="{% url 'category' 'sunglasses' %}?shape=square">Square</a></li>
+                <li><a href="{% url 'category' 'sunglasses' %}?shape=cat-eye">Cat Eye</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Collections</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=weekend%20sunglasses">Weekend</a></li>
+                <li><a href="{% url 'product_search' %}?q=sporty%20sunglasses">Sporty</a></li>
+                <li><a href="{% url 'product_search' %}?q=premium%20sunglasses">Premium</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Brands</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?brand=vincent-chase">Vincent Chase</a></li>
+                <li><a href="{% url 'product_search' %}?brand=fossil">Fossil</a></li>
+                <li><a href="{% url 'product_search' %}?brand=john-jacobs">John Jacobs</a></li>
+              </ul>
+            </div>
+            <div>
+              <h6>Offers</h6>
+              <ul>
+                <li><a href="{% url 'product_search' %}?q=buy%201%20get%201">Buy 1 Get 1</a></li>
+                <li><a href="{% url 'product_search' %}?q=limited%20deal">Limited Deal</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lk-nav-item"><a href="{% url 'around' %}?src=home-eye-test">HOME EYE-TEST</a></div>
+      <div class="lk-nav-item"><a href="{% url 'around' %}?src=storelocator">STORELOCATOR</a></div>
+      <div class="lk-nav-item"><a href="{% url 'category' 'sale' %}">SALE</a></div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <button class="lk-badge" type="button" data-bs-toggle="modal" data-bs-target="#lkTryOnModal">
+        <img src="https://static1.lenskart.com/media/desktop/img/May22/3dtryon1.png" alt="3D Try On" height="18">
+      </button>
+      <a class="lk-brand-btn" href="{% url 'product_search' %}?q=blu">
+        <img src="https://static1.lenskart.com/media/desktop/img/Mar22/13-Mar/blulogo.png" alt="BLU" height="18">
+      </a>
+      <a class="lk-brand-btn" href="{% url 'product_search' %}?q=gold">
+        <img src="https://static5.lenskart.com/media/uploads/gold_max_logo_dc.png" alt="GOLD MAX" height="18">
+      </a>
     </div>
   </div>
-</nav>
+</div>
 
-<!-- Mobile Drawer (Offcanvas) -->
-<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title">Menu</h5>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+<div class="modal fade" id="lkTryOnModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content p-4">
+      <div class="modal-body">
+        <div class="lk-modal-step active" data-step="1">
+          <div class="text-center text-muted small mb-2">
+            Face a light source, align your face, take off your glasses, and tuck your hair behind your ears
+          </div>
+          <div class="lk-tryon-stage">
+            <video id="lkTryOnVideo" autoplay playsinline muted></video>
+          </div>
+          <div class="text-center mt-3">
+            <button class="btn btn-dark" type="button" data-action="take">Take Photo</button>
+          </div>
+        </div>
+        <div class="lk-modal-step" data-step="2">
+          <div class="lk-tryon-success">
+            <div class="lk-tryon-thumb">
+              <img id="lkTryOnThumb" alt="Your photo">
+            </div>
+            <div class="fw-semibold mb-3">Your 3D has been successfully created!</div>
+            <button class="btn btn-dark w-100" type="button" data-action="view">View Frames in 3D</button>
+          </div>
+          <div class="text-center mt-2">
+            <button class="btn btn-link" type="button" data-action="reset">Retake</button>
+          </div>
+        </div>
+        <canvas id="lkTryOnCanvas" class="d-none"></canvas>
+      </div>
+    </div>
   </div>
+</div>
 
-  <div class="offcanvas-body">
-
-    <!-- Categories -->
-    <div class="mb-3">
-      <h6>Categories</h6>
-      <a href="{% url 'category' 'men' %}" class="d-block py-1">Men</a>
-      <a href="{% url 'category' 'women' %}" class="d-block py-1">Women</a>
-      <a href="{% url 'category' 'kids' %}" class="d-block py-1">Kids</a>
-      <a href="{% url 'category' 'eyeglasses' %}" class="d-block py-1">Eyeglasses</a>
-      <a href="{% url 'category' 'computer-glasses' %}" class="d-block py-1">Computer Glasses</a>
+<div class="modal fade" id="lkLoginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-0">
+        <div class="text-center mb-3">
+          <img src="https://static1.lenskart.com/media/desktop/img/DesignStudioIcons/DesktopLoginImage.svg" alt="Login" class="img-fluid">
+        </div>
+        <div id="lk-login-step-1">
+          <h5 class="mb-2">Sign In</h5>
+          <input class="form-control mb-2" id="lk-login-identifier" placeholder="Mobile / Email">
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="lk-login-whatsapp" checked>
+            <label class="form-check-label" for="lk-login-whatsapp">Get updates on WhatsApp</label>
+          </div>
+          <button class="btn btn-primary w-100" id="lk-send-otp">Sign In</button>
+          <div class="text-center mt-3">
+            <small>New member? <a href="#" id="lk-show-register">Create an Account</a></small>
+          </div>
+        </div>
+        <div id="lk-login-step-register" class="d-none">
+          <h5 class="mb-2">Create an Account</h5>
+          <input class="form-control mb-2" id="lk-register-first" placeholder="First Name">
+          <input class="form-control mb-2" id="lk-register-last" placeholder="Last Name">
+          <input class="form-control mb-2" id="lk-register-identifier" placeholder="Mobile / Email">
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="lk-register-whatsapp" checked>
+            <label class="form-check-label" for="lk-register-whatsapp">Get updates on WhatsApp</label>
+          </div>
+          <button class="btn btn-primary w-100" id="lk-register-send">Create an Account</button>
+          <div class="text-center mt-3">
+            <small>Already a member? <a href="#" id="lk-show-login">Sign In</a></small>
+          </div>
+        </div>
+        <div id="lk-login-step-2" class="d-none">
+          <h5 class="mb-2">Sign In</h5>
+          <div class="mb-2">Enter One Time Password sent to</div>
+          <div class="mb-2 fw-semibold" id="lk-otp-target"></div>
+          <input class="form-control mb-3" id="lk-login-otp" placeholder="Enter OTP">
+          <a href="#" class="d-inline-block mb-3" id="lk-resend-otp">Resend OTP</a>
+          <button class="btn btn-primary w-100" id="lk-verify-otp">Sign In</button>
+          <button class="btn btn-link w-100 mt-2" id="lk-back-login">Edit</button>
+          <div class="text-center mt-2">
+            <small>New member? <a href="#" id="lk-show-register-2">Create an Account</a></small>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <!-- Auth -->
-    <div class="mt-4">
-      {% if request.user.is_authenticated %}
-        <a href="{% url 'orders' %}" class="btn btn-outline-secondary w-100 mb-2">My Orders</a>
-        <a href="{% url 'logout' %}" class="btn btn-danger w-100">Sign Out</a>
-      {% else %}
-        <a href="{% url 'login' %}" class="btn btn-outline-primary w-100 mb-2">Login</a>
-        <a href="{% url 'register' %}" class="btn btn-primary w-100">Signup</a>
-      {% endif %}
-    </div>
-
   </div>
 </div>

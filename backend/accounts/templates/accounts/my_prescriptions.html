@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}My Prescriptions{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+  <div class="lk-account">
+    {% include 'accounts/_sidebar.html' with active_tab='prescriptions' %}
+    <div>
+      <h4 class="mb-3">My Saved Prescriptions</h4>
+      {% if prescriptions %}
+        {% for prescription in prescriptions %}
+          <div class="lk-account-card">
+            <div><strong>Name:</strong> {{ prescription.name }}</div>
+            <div><strong>Power Type:</strong> {{ prescription.get_power_type_display }}</div>
+            <div><strong>Right Eye:</strong> {{ prescription.right_sph }} / {{ prescription.right_cyl }}</div>
+            <div><strong>Left Eye:</strong> {{ prescription.left_sph }} / {{ prescription.left_cyl }}</div>
+            <div><strong>Axis:</strong> {{ prescription.axis }}</div>
+            <div><strong>PD:</strong> {{ prescription.pd }}</div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="lk-account-card">No prescriptions saved yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

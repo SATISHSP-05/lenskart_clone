@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+  <div class="lk-account">
+    {% include 'accounts/_sidebar.html' with active_tab='orders' %}
+    <div>
+      <h4 class="mb-3">My Orders</h4>
+      {% if orders %}
+        {% for order in orders %}
+          <div class="lk-account-card">
+            <div><strong>Order ID:</strong> {{ order.order_id }}</div>
+            <div><strong>Status:</strong> {{ order.get_status_display }}</div>
+            <div><strong>Total:</strong> Rs {{ order.total_price }}</div>
+            <div><strong>Date:</strong> {{ order.created_at }}</div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="lk-account-card">We have not found any Orders for this account.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

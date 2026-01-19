@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Information{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+  <div class="lk-account">
+    {% include 'accounts/_sidebar.html' with active_tab='account' %}
+    <div>
+      <h4 class="mb-3">Account Information</h4>
+      <div class="lk-account-card">
+        <div><strong>Username:</strong> {{ request.user.username }}</div>
+        <div><strong>Email:</strong> {{ request.user.email|default:"-" }}</div>
+        <div><strong>Phone:</strong> {{ profile.phone|default:"-" }}</div>
+      </div>
+      <div class="lk-account-card">
+        <label class="form-label">First Name</label>
+        <input class="form-control mb-2" value="{{ request.user.first_name }}">
+        <label class="form-label">Last Name</label>
+        <input class="form-control mb-2" value="{{ request.user.last_name }}">
+        <label class="form-label">Gender</label>
+        <select class="form-select mb-2">
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+        <button class="btn btn-warning">Save &amp; Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

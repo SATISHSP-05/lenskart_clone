@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .lk-pdp-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+    gap: 28px;
+  }
+  .lk-pdp-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .lk-pdp-card {
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    background: #fff;
+    padding: 12px;
+  }
+  .lk-pdp-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: contain;
+    background: #f7f7f7;
+    border-radius: 10px;
+  }
+  .lk-pdp-summary {
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    padding: 16px;
+    background: #fff;
+  }
+  .lk-pdp-price {
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .lk-pill-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #f3f4ff;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .lk-tryon-card {
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .lk-tryon-card img {
+    width: 52px;
+    height: 52px;
+    border-radius: 6px;
+    object-fit: cover;
+  }
+  .lk-accordion {
+    border-top: 1px solid #e6e6e6;
+    margin-top: 14px;
+  }
+  .lk-accordion details {
+    border-bottom: 1px solid #e6e6e6;
+    padding: 10px 0;
+  }
+  .lk-accordion summary {
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .lk-accordion summary::-webkit-details-marker {
+    display: none;
+  }
+  .lk-accordion summary:after {
+    content: "›";
+    transform: rotate(90deg);
+    font-size: 18px;
+    color: #6b6b6b;
+  }
+  details[open] summary:after {
+    transform: rotate(-90deg);
+  }
+  .lk-pincode {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .lk-pincode input {
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid #d0d0d0;
+    padding: 6px 4px;
+  }
+  .lk-link {
+    color: #1aa59a;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  @media (max-width: 992px) {
+    .lk-pdp-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="lk-pdp-grid">
+    <div>
+      <div class="lk-pdp-gallery">
+        {% for image in product_images %}
+          <div class="lk-pdp-card">
+            <img src="{{ image.image.url }}" alt="{{ product.name }}">
+          </div>
+        {% empty %}
+          <div class="lk-pdp-card">
+            <div class="bg-light border rounded p-5 text-center">Image</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="lk-pdp-summary">
+      <div class="lk-pill-rating mb-2">
+        4.8 ★ 2282
+      </div>
+      <div class="fw-semibold">{{ product.brand.name }}</div>
+      <h4 class="mb-1">{{ product.name }}</h4>
+      <div class="text-muted small mb-2">Size: {{ product.get_size_display|default:"-" }}</div>
+      <div class="lk-pdp-price mb-3">Rs {{ product.get_display_price }}</div>
+
+      <div class="mb-3">
+        <div class="small text-muted">Frame + Lens</div>
+      </div>
+
+      <button class="btn btn-success w-100 mb-2">SELECT LENSES</button>
+      <button class="lk-tryon-card mb-3 w-100" type="button" data-bs-toggle="modal" data-bs-target="#lkTryOnModal">
+        <span class="fw-semibold">Try On</span>
+        <img src="https://static.lenskart.com/media/desktop/img/try-on-model.jpg" alt="Try On">
+      </button>
+
+      <div class="lk-accordion">
+        <details>
+          <summary>Technical information</summary>
+          <div class="small text-muted mt-2">
+            <div>Frame Type: {{ product.get_frame_type_display|default:"-" }}</div>
+            <div>Shape: {{ product.get_shape_display|default:"-" }}</div>
+            <div>Frame Material: {{ product.frame_material|default:"-" }}</div>
+            <div>Frame Size: {{ product.get_size_display|default:"-" }}</div>
+            <div>Frame Color: {{ product.color|default:"-" }}</div>
+          </div>
+        </details>
+        <details>
+          <summary>Visit Nearby Store</summary>
+          <div class="mt-2 d-flex gap-2 align-items-center">
+            <img src="https://static.lenskart.com/media/desktop/img/store-locator-thumb.jpg" alt="Store" width="60" height="60">
+            <div class="small">
+              Please share your location to see nearby stores.<br>
+              <a class="lk-link" href="#">Store Locator</a>
+            </div>
+          </div>
+        </details>
+        <details>
+          <summary>Check Delivery Options</summary>
+          <div class="lk-pincode">
+            <input type="text" placeholder="Enter Pincode">
+            <button class="btn btn-link lk-link p-0" type="button">Check</button>
+          </div>
+        </details>
+        <details>
+          <summary>Review (2282)</summary>
+          <div class="mt-2">
+            <div class="text-warning">★★★★★</div>
+            <div class="fw-semibold mt-1">GD Gd</div>
+            <div class="small text-muted">Harshit S. - Jan 14, 2026</div>
+            <button class="btn btn-outline-info btn-sm mt-2">MORE REVIEWS</button>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

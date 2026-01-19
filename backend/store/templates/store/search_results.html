@@ -1,21 +1,148 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Search: {{ query }}{% endblock %}
+{% block title %}{% if query %}Search: {{ query }}{% else %}All Products{% endif %}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .lk-product-card {
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 12px;
+    background: #fff;
+    height: 100%;
+    position: relative;
+  }
+  .lk-product-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity 0.2s ease;
+  }
+  .lk-product-image {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    border-radius: 12px;
+    background: #f7f7f7;
+    overflow: hidden;
+  }
+  .lk-product-image .lk-img-secondary {
+    opacity: 0;
+  }
+  .lk-product-card:hover .lk-img-secondary {
+    opacity: 1;
+  }
+  .lk-product-card:hover .lk-img-primary {
+    opacity: 0;
+  }
+  .lk-tryon-frame {
+    position: absolute;
+    inset: 0;
+    background: #f7f7f7;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .lk-tryon-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .lk-tryon-glasses {
+    position: absolute;
+    width: 58%;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .lk-tryon-on .lk-product-image .lk-img-primary,
+  .lk-tryon-on .lk-product-image .lk-img-secondary {
+    opacity: 0;
+  }
+  .lk-tryon-on .lk-tryon-frame {
+    display: flex;
+  }
+  .lk-product-meta {
+    font-size: 12px;
+    color: #666;
+  }
+  .lk-heart {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #555;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 
-<h3 class="mb-3">Search Results for: "{{ query }}"</h3>
+<h3 class="mb-3">
+  {% if query %}Products{% else %}All Products{% endif %}
+</h3>
 
-<div class="row">
+<form method="get" class="row g-2 mb-4">
+  <input type="hidden" name="q" value="{{ query }}">
+  <div class="col-md-4">
+    <select name="brand" class="form-select">
+      <option value="">All Brands</option>
+      {% for brand in brands %}
+        <option value="{{ brand.slug }}" {% if selected_brand == brand.slug %}selected{% endif %}>{{ brand.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-4">
+    <select name="shape" class="form-select">
+      <option value="">All Shapes</option>
+      {% for value, label in shape_choices %}
+        <option value="{{ value }}" {% if selected_shape == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-4">
+    <button class="btn btn-primary w-100" type="submit">Apply Filters</button>
+  </div>
+</form>
+
+<div class="row g-3">
   {% for product in page_obj %}
-    <div class="col-md-3 mb-4">
-      <div class="card h-100">
-        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-        <div class="card-body">
-          <h6 class="card-title">{{ product.name }}</h6>
-          <p class="card-text">₹{{ product.price }}</p>
-          <a href="{% url 'product_detail' product.slug %}" class="btn btn-primary btn-sm">View</a>
+    <div class="col-md-4 col-sm-6">
+      <div class="lk-product-card">
+        <span class="lk-heart">♡</span>
+        {% with img=product.get_primary_image secondary=product.get_secondary_image %}
+          {% if img %}
+            <div class="lk-product-image">
+              <img class="lk-img-primary" src="{{ img.image.url }}" alt="{{ product.name }}">
+              {% if secondary %}
+                <img class="lk-img-secondary" src="{{ secondary.image.url }}" alt="{{ product.name }}">
+              {% endif %}
+              <div class="lk-tryon-frame">
+                <img class="lk-tryon-photo" data-tryon-photo alt="Try On">
+                {% if secondary %}
+                  <img class="lk-tryon-glasses" src="{{ secondary.image.url }}" alt="Glasses">
+                {% endif %}
+              </div>
+            </div>
+          {% else %}
+            <div class="bg-light border rounded p-5 text-center">Image</div>
+          {% endif %}
+        {% endwith %}
+        <div class="mt-3">
+          <div class="fw-semibold">{{ product.brand.name }}</div>
+          <div class="lk-product-meta">{{ product.name }}</div>
+          <div class="fw-bold mt-1">Rs {{ product.get_display_price }}</div>
+          <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-dark btn-sm mt-2">View</a>
         </div>
       </div>
     </div>
@@ -24,17 +151,20 @@
   {% endfor %}
 </div>
 
-<!-- Pagination -->
 <nav>
   <ul class="pagination">
     {% if page_obj.has_previous %}
-      <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}">Prev</a></li>
+      <li class="page-item">
+        <a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}&brand={{ selected_brand }}&shape={{ selected_shape }}">Prev</a>
+      </li>
     {% endif %}
 
     <li class="page-item active"><a class="page-link">{{ page_obj.number }}</a></li>
 
     {% if page_obj.has_next %}
-      <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}">Next</a></li>
+      <li class="page-item">
+        <a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}&brand={{ selected_brand }}&shape={{ selected_shape }}">Next</a>
+      </li>
     {% endif %}
   </ul>
 </nav>

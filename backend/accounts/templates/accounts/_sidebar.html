@@ -1,0 +1,10 @@
+<div class="lk-account-sidebar">
+  <a href="{% url 'my_orders' %}" class="{% if active_tab == 'orders' %}active{% endif %}">My Orders</a>
+  <a href="#" class="{% if active_tab == '3d' %}active{% endif %}">My 3D Model</a>
+  <a href="{% url 'account_information' %}" class="{% if active_tab == 'account' %}active{% endif %}">Account Information</a>
+  <a href="#" class="{% if active_tab == 'notifications' %}active{% endif %}">Manage Notifications</a>
+  <a href="#" class="{% if active_tab == 'address' %}active{% endif %}">Address Book</a>
+  <a href="{% url 'my_prescriptions' %}" class="{% if active_tab == 'prescriptions' %}active{% endif %}">My Prescriptions</a>
+  <a href="#" class="{% if active_tab == 'cards' %}active{% endif %}">Saved Cards</a>
+  <a href="{% url 'store_credit' %}" class="{% if active_tab == 'credits' %}active{% endif %}">Store Credit</a>
+</div>
