@@ -1,5 +1,5 @@
 <div class="lk-account-sidebar">
-  <a href="{% url 'my_orders' %}" class="{% if active_tab == 'orders' %}active{% endif %}">My Orders</a>
+  <a href="/orders/" class="{% if active_tab == 'orders' %}active{% endif %}">My Orders</a>
   <a href="#" class="{% if active_tab == '3d' %}active{% endif %}">My 3D Model</a>
   <a href="{% url 'account_information' %}" class="{% if active_tab == 'account' %}active{% endif %}">Account Information</a>
   <a href="#" class="{% if active_tab == 'notifications' %}active{% endif %}">Manage Notifications</a>

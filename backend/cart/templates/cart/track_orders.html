@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Track Orders{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+  <div class="lk-account">
+    {% include 'accounts/_sidebar.html' with active_tab='orders' %}
+    <div>
+      <h4 class="mb-3">Orders</h4>
+      {% if order_rows %}
+        {% for row in order_rows %}
+          {% with order=row.order %}
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+              <div class="d-flex justify-content-between flex-wrap gap-2">
+                <div>
+                  <div class="small text-muted">Order ID: {{ order.razorpay_order_id }}</div>
+                  <div class="small text-muted">Order Date: {{ order.created_at|date:"d M Y" }}</div>
+                </div>
+                <div class="text-end">
+                  <div class="small text-muted">Total Price</div>
+                  <div class="fw-semibold">Rs {{ row.total_price }}</div>
+                </div>
+              </div>
+              <div class="mt-3">
+                <span class="badge {% if order.status == 'paid' %}bg-success{% elif order.status == 'failed' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                  {{ order.get_status_display }}
+                </span>
+              </div>
+              {% if order.items %}
+                <div class="mt-3">
+                  {% for item in order.items %}
+                    <div class="d-flex justify-content-between small {% if not forloop.last %}mb-2{% endif %}">
+                      <div>{{ item.name }}</div>
+                      <div>Rs {{ item.price }}</div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+              <div class="mt-3">
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'order_detail' order.id %}">Order Details</a>
+                {% if order.status != 'paid' %}
+                  <a class="btn btn-primary btn-sm" href="{% url 'checkout_payment' %}">Pay Now</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endwith %}
+        {% endfor %}
+      {% else %}
+        <div class="text-muted">No orders yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

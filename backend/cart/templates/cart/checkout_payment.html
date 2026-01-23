@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Checkout - Payment{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="small text-muted">Login/Signup > Shipping Address > Payment > Summary</div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <h4 class="mb-3">Payment</h4>
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+          <div class="fw-semibold mb-1">Delivering to</div>
+          <div>{{ address.name }} - {{ address.phone }}</div>
+          <div class="text-muted">{{ address.address_line1 }}{% if address.address_line2 %}, {{ address.address_line2 }}{% endif %}</div>
+          <div class="text-muted">{{ address.city }}, {{ address.state }} - {{ address.pincode }}</div>
+          <a class="small text-decoration-none" href="{% url 'checkout_address' %}">Change address</a>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="fw-semibold mb-2">Order Summary</div>
+          {% if cart_items %}
+            {% for item in cart_items %}
+              <div class="d-flex justify-content-between small {% if not forloop.last %}mb-2{% endif %}">
+                <span>{{ item.name }}</span>
+                <span>Rs {{ item.get_display_price }}</span>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-muted">Your cart is empty.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <h5 class="mb-3">Bill Details</h5>
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <span>Total item price</span>
+            <span>Rs {{ total_price|default:"0" }}</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between fw-semibold">
+            <span>Total payable</span>
+            <span>Rs {{ total_price|default:"0" }}</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-dark w-100" type="button" id="rzp-button">Rs {{ total_price|default:"0" }} - Pay Now</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  (function () {
+    var payBtn = document.getElementById("rzp-button");
+    if (!payBtn) {
+      return;
+    }
+
+    function getCookie(name) {
+      var value = "; " + document.cookie;
+      var parts = value.split("; " + name + "=");
+      if (parts.length === 2) {
+        return parts.pop().split(";").shift();
+      }
+      return "";
+    }
+
+    payBtn.addEventListener("click", function () {
+      payBtn.disabled = true;
+      payBtn.textContent = "Starting...";
+
+      fetch("{% url 'checkout_payment_create' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+          "Accept": "application/json"
+        }
+      })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            return { ok: response.ok, data: data };
+          });
+        })
+        .then(function (result) {
+          if (!result.ok) {
+            alert(result.data && result.data.error ? result.data.error : "Unable to start payment.");
+            return;
+          }
+
+          var options = {
+            key: "{{ razorpay_key_id }}",
+            amount: result.data.amount,
+            currency: result.data.currency || "INR",
+            name: result.data.name || "Lenskart",
+            order_id: result.data.order_id,
+            prefill: result.data.prefill || {},
+            handler: function (response) {
+              var form = document.createElement("form");
+              form.method = "POST";
+              form.action = "{% url 'checkout_payment_verify' %}";
+
+              var fields = {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                csrfmiddlewaretoken: getCookie("csrftoken")
+              };
+
+              Object.keys(fields).forEach(function (key) {
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+              });
+
+              document.body.appendChild(form);
+              form.submit();
+            }
+          };
+
+          var rzp = new Razorpay(options);
+          rzp.on("payment.failed", function () {
+            alert("Payment failed. Please try again.");
+          });
+          rzp.open();
+        })
+        .catch(function () {
+          alert("Unable to start payment.");
+        })
+        .finally(function () {
+          payBtn.disabled = false;
+          payBtn.textContent = "Rs {{ total_price|default:'0' }} - Pay Now";
+        });
+    });
+  })();
+</script>
+{% endblock %}

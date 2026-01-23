@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Order Summary{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="small text-muted">Login/Signup > Shipping Address > Payment > Summary</div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <h4 class="mb-3">Order Summary</h4>
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+          <div class="fw-semibold mb-1">Order ID</div>
+          <div class="text-muted">{{ order.razorpay_order_id }}</div>
+          <div class="fw-semibold mt-3 mb-1">Delivering to</div>
+          {% if address %}
+            <div>{{ address.name }} - {{ address.phone }}</div>
+            <div class="text-muted">{{ address.address_line1 }}{% if address.address_line2 %}, {{ address.address_line2 }}{% endif %}</div>
+            <div class="text-muted">{{ address.city }}, {{ address.state }} - {{ address.pincode }}</div>
+          {% else %}
+            <div class="text-muted">No address saved.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="fw-semibold mb-2">Items</div>
+          {% if order.items %}
+            {% for item in order.items %}
+              <div class="d-flex justify-content-between small {% if not forloop.last %}mb-2{% endif %}">
+                <span>{{ item.name }}</span>
+                <span>Rs {{ item.price }}</span>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-muted">No items found.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <h5 class="mb-3">Bill Details</h5>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <span>Total item price</span>
+            <span>Rs {{ total_price }}</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between fw-semibold">
+            <span>Total payable</span>
+            <span>Rs {{ total_price }}</span>
+          </div>
+        </div>
+      </div>
+      <a class="btn btn-primary w-100 mt-3" href="{% url 'home' %}">Continue Shopping</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

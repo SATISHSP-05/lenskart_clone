@@ -27,7 +27,7 @@
       <input class="lk-search" type="search" placeholder="What are you looking for?" name="q" aria-label="Search">
     </form>
 
-    <a class="lk-pill" href="{% url 'login' %}">Track Orders</a>
+    <a class="lk-pill" href="{% url 'track_orders' %}">Track Orders</a>
 
     {% if request.user.is_authenticated %}
       <div class="dropdown">
@@ -35,7 +35,7 @@
           {{ request.user.username }}
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="{% url 'my_orders' %}">My Orders</a></li>
+          <li><a class="dropdown-item" href="/orders/">My Orders</a></li>
           <li><a class="dropdown-item" href="{% url 'my_prescriptions' %}">My Prescription</a></li>
           <li><a class="dropdown-item" href="{% url 'store_credit' %}">My Store Credit</a></li>
           <li><a class="dropdown-item" href="{% url 'account_information' %}">Account Information</a></li>

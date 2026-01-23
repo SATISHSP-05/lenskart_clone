@@ -1,8 +1,17 @@
-from django.http import HttpResponse
+import json
+import re
+from datetime import timedelta
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
+import ssl
+
+from django.conf import settings
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator
 from django.db.models import Q
-from .models import Banner, Brand, Category, Product, HtoAddress
+from django.utils import timezone
+from .models import Banner, Brand, Category, DeliveryPincode, Product, HtoAddress
 
 
 def home_view(request):
@@ -15,6 +24,7 @@ def home_view(request):
     replacement_banner = Banner.objects.filter(active=True, banner_type='replacement').order_by('order').first()
     buy1get1_banner = Banner.objects.filter(active=True, banner_type='buy1get1').order_by('order').first()
     exclusive_banner = Banner.objects.filter(active=True, banner_type='exclusive').order_by('order').first()
+    exclusive_banners = Banner.objects.filter(active=True, banner_type='exclusive').order_by('order')
     premium_banner = Banner.objects.filter(active=True, banner_type='premium').order_by('order').first()
 
     context = {
@@ -27,10 +37,91 @@ def home_view(request):
         'replacement_banner': replacement_banner,
         'buy1get1_banner': buy1get1_banner,
         'exclusive_banner': exclusive_banner,
+        'exclusive_banners': exclusive_banners,
         'premium_banner': premium_banner,
         'shape_choices': Product.SHAPE_CHOICES,
     }
     return render(request, 'store/home.html', context)
+
+
+PINCODE_RE = re.compile(r"^[1-9][0-9]{5}$")
+
+
+def _format_delivery_date(days):
+    delivery_date = timezone.localdate() + timedelta(days=days)
+    return delivery_date.strftime("%a %b %d %Y")
+
+
+def _pincode_payload(record):
+    return {
+        "pincode": record.pincode,
+        "city": record.city,
+        "state": record.state,
+        "delivery_days": record.delivery_days,
+        "delivery_date": _format_delivery_date(record.delivery_days),
+        "source": record.source,
+    }
+
+
+def _fetch_external_pincode(pin):
+    api_template = getattr(settings, "PINCODE_API_URL", "")
+    if not api_template:
+        return None, "External pincode service not configured."
+    url = api_template.format(pincode=pin)
+    request = Request(url, headers={"User-Agent": "lenskart-ecommerce/1.0"})
+    verify_ssl = getattr(settings, "PINCODE_VERIFY_SSL", True)
+    context = ssl.create_default_context() if verify_ssl else ssl._create_unverified_context()
+    try:
+        with urlopen(request, timeout=5, context=context) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except (URLError, HTTPError, ValueError) as exc:
+        return None, f"External pincode lookup failed: {exc}"
+
+    if not payload or not isinstance(payload, list):
+        return None, "External pincode response invalid."
+    entry = payload[0] or {}
+    if entry.get("Status") != "Success":
+        return None, "Pincode not serviceable."
+    post_offices = entry.get("PostOffice") or []
+    if not post_offices:
+        return None, "Pincode not serviceable."
+    office = post_offices[0] or {}
+    return {
+        "city": office.get("District") or office.get("Block") or "",
+        "state": office.get("State") or "",
+    }, None
+
+
+def pincode_check_view(request):
+    if request.method != "GET":
+        return JsonResponse({"error": "Method not allowed."}, status=405)
+
+    pin = (request.GET.get("pincode") or "").strip()
+    if not PINCODE_RE.match(pin):
+        return JsonResponse({"error": "Please enter a valid 6 digit pincode."}, status=400)
+
+    record = DeliveryPincode.objects.filter(pincode=pin, active=True).first()
+    if record:
+        return JsonResponse(_pincode_payload(record))
+
+    external_data, error = _fetch_external_pincode(pin)
+    if error:
+        status = 404 if error == "Pincode not serviceable." else 502
+        return JsonResponse({"error": error}, status=status)
+
+    delivery_days = getattr(settings, "PINCODE_DEFAULT_DELIVERY_DAYS", 3)
+    record, _ = DeliveryPincode.objects.update_or_create(
+        pincode=pin,
+        defaults={
+            "city": external_data.get("city", ""),
+            "state": external_data.get("state", ""),
+            "delivery_days": delivery_days,
+            "active": True,
+            "source": "external",
+            "last_checked": timezone.now(),
+        },
+    )
+    return JsonResponse(_pincode_payload(record))
 
 
 def _build_filtered_products(request, base_products, fixed_shapes=None, fixed_genders=None):
@@ -393,3 +484,75 @@ def hto_date_time_view(request):
 
 def hto_confirm_view(request):
     return render(request, "store/hto_confirm.html")
+
+
+def promo_jj_stranger_things_view(request):
+    base_products = Product.objects.filter(is_active=True)
+    products, filter_context = _build_filtered_products(request, base_products)
+    paginator = Paginator(products, 12)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "page_obj": page_obj,
+        "page_title": "JJ x Stranger Things",
+        "category_label": "Eyewear",
+        "tryon_enabled": request.GET.get("tryon") == "1",
+    }
+    context.update(filter_context)
+    return render(request, "store/promo_jj_stranger_things.html", context)
+
+
+def brand_listing_view(request, slug):
+    brand = get_object_or_404(Brand, slug=slug, active=True)
+    base_products = Product.objects.filter(is_active=True, brand=brand)
+    products, filter_context = _build_filtered_products(request, base_products)
+    paginator = Paginator(products, 12)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    filter_context["selected_brands"] = [brand.slug]
+
+    context = {
+        "brand": brand,
+        "page_obj": page_obj,
+        "page_title": brand.name,
+        "category_label": "Eyewear",
+        "tryon_enabled": request.GET.get("tryon") == "1",
+    }
+    context.update(filter_context)
+    return render(request, "store/brand_listing.html", context)
+
+
+def promo_collection_view(request, slug, title, keyword):
+    base_products = Product.objects.filter(is_active=True).filter(
+        Q(name__icontains=keyword)
+        | Q(category__name__icontains=keyword)
+        | Q(brand__name__icontains=keyword)
+    )
+    products, filter_context = _build_filtered_products(request, base_products)
+    paginator = Paginator(products, 12)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "page_obj": page_obj,
+        "page_title": title,
+        "category_label": "Eyewear",
+        "tryon_enabled": request.GET.get("tryon") == "1",
+        "promo_slug": slug,
+    }
+    context.update(filter_context)
+    return render(request, "store/promo_collection_listing.html", context)
+
+
+def promo_all_switch_view(request):
+    return promo_collection_view(request, "all-switch", "All Switch", "switch")
+
+
+def promo_air_x_view(request):
+    return promo_collection_view(request, "air-x", "Air X", "air")
+
+
+def promo_transparent_view(request):
+    return promo_collection_view(request, "transparents-eyeglasses", "Transparent Eyeglasses", "transparent")

@@ -2,10 +2,22 @@ from django.db import models
 from django.utils.text import slugify
 
 
+class UnrestrictedImageField(models.ImageField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Allow uploads without relying on filename extensions.
+        self.validators = []
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        # Keep migrations stable by treating this like a standard ImageField.
+        return name, "django.db.models.ImageField", args, kwargs
+
+
 class Brand(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True)
-    logo = models.ImageField(upload_to='brands/', blank=True, null=True)
+    logo = UnrestrictedImageField(upload_to='brands/', blank=True, null=True)
     active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -20,7 +32,7 @@ class Brand(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True)
-    image = models.ImageField(upload_to='categories/', blank=True, null=True)
+    image = UnrestrictedImageField(upload_to='categories/', blank=True, null=True)
     active = models.BooleanField(default=True)
 
     class Meta:
@@ -115,7 +127,7 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='products/')
+    image = UnrestrictedImageField(upload_to='products/')
     is_primary = models.BooleanField(default=False)
 
     def __str__(self):
@@ -134,7 +146,7 @@ class Banner(models.Model):
     ]
     title = models.CharField(max_length=255, blank=True)
     banner_type = models.CharField(max_length=30, choices=BANNER_TYPES, default='misc')
-    image = models.ImageField(upload_to='banners/')
+    image = UnrestrictedImageField(upload_to='banners/')
     link = models.URLField(blank=True, null=True)
     active = models.BooleanField(default=True)
     order = models.PositiveIntegerField(default=0)
@@ -160,3 +172,21 @@ class HtoAddress(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.city}"
+
+
+class DeliveryPincode(models.Model):
+    pincode = models.CharField(max_length=6, unique=True)
+    city = models.CharField(max_length=120, blank=True)
+    state = models.CharField(max_length=120, blank=True)
+    delivery_days = models.PositiveSmallIntegerField(default=3)
+    active = models.BooleanField(default=True)
+    source = models.CharField(max_length=20, default="db")
+    last_checked = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["pincode"]
+
+    def __str__(self):
+        return self.pincode

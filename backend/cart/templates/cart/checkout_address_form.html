@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Checkout - Add Address{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <a class="text-decoration-none" href="{% url 'checkout_address' %}">← Back</a>
+    <div class="small text-muted">Shipping Address</div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <form method="post" class="card border-0 shadow-sm">
+        {% csrf_token %}
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Save as</label>
+            <div class="d-flex gap-2 flex-wrap">
+              {% for value,label in label_choices %}
+                <label class="btn btn-outline-secondary btn-sm">
+                  <input type="radio" name="label" value="{{ value }}" class="me-1" {% if address and address.label == value %}checked{% endif %} {% if not address and value == "home" %}checked{% endif %}>
+                  {{ label }}
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Pincode *</label>
+            <input class="form-control" type="text" name="pincode" value="{{ address.pincode|default_if_none:'' }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">House no., Building name *</label>
+            <input class="form-control" type="text" name="address_line1" value="{{ address.address_line1|default_if_none:'' }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Road name, Area, Locality *</label>
+            <input class="form-control" type="text" name="address_line2" value="{{ address.address_line2|default_if_none:'' }}">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">City *</label>
+            <input class="form-control" type="text" name="city" value="{{ address.city|default_if_none:'' }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">State *</label>
+            <input class="form-control" type="text" name="state" value="{{ address.state|default_if_none:'' }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Name *</label>
+            <input class="form-control" type="text" name="name" value="{{ address.name|default_if_none:'' }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Phone number *</label>
+            <input class="form-control" type="text" name="phone" value="{{ address.phone|default_if_none:'' }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email (optional)</label>
+            <input class="form-control" type="email" name="email" value="{{ address.email|default_if_none:'' }}">
+          </div>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="is_default" id="isDefault" {% if address and address.is_default %}checked{% endif %}>
+            <label class="form-check-label" for="isDefault">Set as default address</label>
+          </div>
+          <button class="btn btn-primary w-100" type="submit">Save Address &amp; Proceed</button>
+        </div>
+      </form>
+    </div>
+    <div class="col-lg-4">
+      <h5 class="mb-3">Bill Details</h5>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <span>Total item price</span>
+            <span>Rs {{ total_price|default:"0" }}</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between fw-semibold">
+            <span>Total payable</span>
+            <span>Rs {{ total_price|default:"0" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

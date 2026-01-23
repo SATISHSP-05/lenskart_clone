@@ -1,0 +1,195 @@
+:root {
+  --lk-admin-bg: #0a0a0f;
+  --lk-admin-panel: #111218;
+  --lk-admin-card: #151823;
+  --lk-admin-ink: #f2f2f5;
+  --lk-admin-muted: #9aa0b2;
+  --lk-admin-accent: #ffb000;
+  --lk-admin-accent-2: #f7901e;
+  --lk-admin-border: rgba(255, 255, 255, 0.08);
+  --lk-admin-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+body {
+  background: radial-gradient(circle at 20% 0%, #14141b 0%, #0a0a0f 60%);
+  color: var(--lk-admin-ink);
+}
+
+#container {
+  background: transparent;
+}
+
+#header {
+  background: #0b0c12;
+  color: var(--lk-admin-ink);
+  border-bottom: 1px solid var(--lk-admin-border);
+}
+
+#header a:link,
+#header a:visited {
+  color: var(--lk-admin-ink);
+}
+
+#branding h1,
+#branding h1 a:link,
+#branding h1 a:visited {
+  color: var(--lk-admin-ink);
+  font-weight: 700;
+}
+
+#user-tools {
+  color: var(--lk-admin-muted);
+}
+
+#user-tools a:link,
+#user-tools a:visited {
+  color: var(--lk-admin-ink);
+}
+
+.breadcrumbs {
+  background: #0f1016;
+  border: 1px solid var(--lk-admin-border);
+  color: var(--lk-admin-muted);
+}
+
+.breadcrumbs a {
+  color: var(--lk-admin-accent);
+}
+
+#content {
+  padding: 28px;
+}
+
+.module,
+.dashboard-module,
+.aligned .form-row,
+.inline-group,
+.selector {
+  background: var(--lk-admin-card);
+  border: 1px solid var(--lk-admin-border);
+  border-radius: 18px;
+  box-shadow: var(--lk-admin-shadow);
+}
+
+.module h2,
+.module caption,
+.dashboard-module h2 {
+  background: transparent;
+  color: var(--lk-admin-ink);
+  font-weight: 700;
+  border-bottom: 1px solid var(--lk-admin-border);
+}
+
+.sidebar {
+  background: var(--lk-admin-panel);
+  border: 1px solid var(--lk-admin-border);
+  border-radius: 18px;
+  box-shadow: var(--lk-admin-shadow);
+}
+
+.sidebar h3 {
+  color: var(--lk-admin-ink);
+  font-weight: 700;
+}
+
+.sidebar a {
+  color: var(--lk-admin-muted);
+}
+
+.sidebar a:hover {
+  color: var(--lk-admin-ink);
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="url"],
+input[type="tel"],
+textarea,
+select {
+  background: #0f1117;
+  border: 1px solid var(--lk-admin-border);
+  color: var(--lk-admin-ink);
+  border-radius: 12px;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="url"]:focus,
+input[type="tel"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--lk-admin-accent);
+  box-shadow: 0 0 0 2px rgba(255, 176, 0, 0.2);
+}
+
+input[type="submit"],
+button,
+.button,
+.submit-row input,
+.object-tools a:link,
+.object-tools a:visited {
+  background: linear-gradient(135deg, var(--lk-admin-accent), var(--lk-admin-accent-2));
+  border: none;
+  color: #111;
+  border-radius: 999px;
+  padding: 8px 16px;
+}
+
+input[type="submit"]:hover,
+button:hover,
+.button:hover,
+.submit-row input:hover,
+.object-tools a:hover {
+  filter: brightness(1.05);
+}
+
+.submit-row {
+  background: transparent;
+  border: none;
+}
+
+table {
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--lk-admin-card);
+}
+
+thead th {
+  background: #12131a;
+  color: var(--lk-admin-ink);
+}
+
+tbody tr:nth-child(odd) {
+  background: #10131b;
+}
+
+tbody tr:hover {
+  background: #181c27;
+}
+
+a:link,
+a:visited {
+  color: var(--lk-admin-accent);
+}
+
+.object-tools a:link,
+.object-tools a:visited {
+  text-decoration: none;
+}
+
+#nav-sidebar {
+  background: #0d0f15;
+  border-right: 1px solid var(--lk-admin-border);
+}
+
+#nav-sidebar .current-app > a,
+#nav-sidebar .current-model > a,
+#nav-sidebar a:focus {
+  color: #fff;
+  background: rgba(255, 176, 0, 0.18);
+  border-radius: 10px;
+}

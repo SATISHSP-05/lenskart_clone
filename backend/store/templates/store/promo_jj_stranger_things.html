@@ -1,0 +1,428 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}JJ x Stranger Things{% endblock %}
+
+{% block extra_head %}
+<style>
+  .lk-promo-hero {
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .lk-promo-hero img {
+    width: 100%;
+    display: block;
+  }
+  .lk-filter-card {
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 14px;
+    background: #fff;
+  }
+  .lk-filter-title {
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  .lk-filter-list {
+    max-height: 180px;
+    overflow-y: auto;
+    padding-right: 6px;
+  }
+  .lk-filter-sticky {
+    position: sticky;
+    top: 20px;
+  }
+  .lk-listing-head {
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    padding: 10px 14px;
+    background: #fafafa;
+  }
+  .lk-toggle {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 24px;
+  }
+  .lk-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .lk-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #d4d4d4;
+    transition: 0.2s;
+    border-radius: 20px;
+  }
+  .lk-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #fff;
+    transition: 0.2s;
+    border-radius: 50%;
+  }
+  .lk-toggle input:checked + .lk-slider {
+    background-color: #29a19c;
+  }
+  .lk-toggle input:checked + .lk-slider:before {
+    transform: translateX(26px);
+  }
+  .lk-product-card {
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 12px;
+    background: #fff;
+    height: 100%;
+    position: relative;
+  }
+  .lk-product-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity 0.2s ease;
+  }
+  .lk-product-image {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    border-radius: 12px;
+    background: #f7f7f7;
+    overflow: hidden;
+  }
+  .lk-tryon-frame {
+    position: absolute;
+    inset: 0;
+    background: #f7f7f7;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .lk-tryon-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .lk-tryon-glasses {
+    position: absolute;
+    width: 58%;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .lk-tryon-on .lk-product-image .lk-img-primary,
+  .lk-tryon-on .lk-product-image .lk-img-secondary {
+    opacity: 0;
+  }
+  .lk-tryon-on .lk-tryon-frame {
+    display: flex;
+  }
+  .lk-product-image .lk-img-secondary {
+    opacity: 0;
+  }
+  .lk-product-card:hover .lk-img-secondary {
+    opacity: 1;
+  }
+  .lk-product-card:hover .lk-img-primary {
+    opacity: 0;
+  }
+  .lk-product-meta {
+    font-size: 12px;
+    color: #666;
+  }
+  .lk-heart {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #555;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="text-muted small mb-2">
+    Eyewear / Eyewear / promotion / {{ page_title }}
+  </div>
+
+  <div class="lk-promo-hero">
+    <img src="https://static5.lenskart.com/media/uploads/plp_web-STXJJ.png" alt="JJ x Stranger Things">
+  </div>
+
+  <div class="lk-listing-head d-flex flex-wrap align-items-center justify-content-between mb-3 gap-3">
+    <div>
+      <div class="text-uppercase small text-muted">{{ page_title }}</div>
+      <div class="small">Showing {{ page_obj.paginator.count }} Results</div>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2">
+        <span class="small fw-semibold">View Frames</span>
+        <label class="lk-toggle">
+          <input type="checkbox" id="lk-tryon-toggle" {% if tryon_enabled %}checked{% endif %}>
+          <span class="lk-slider"></span>
+        </label>
+        <span class="small fw-semibold">View 3D Try On</span>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="small fw-semibold">Sort By</span>
+        <select class="form-select form-select-sm" style="width: 160px;">
+          <option>Best Sellers</option>
+          <option>Price: Low to High</option>
+          <option>Price: High to Low</option>
+          <option>New</option>
+          <option>Most Viewed</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <aside class="col-lg-3 mb-4">
+      <div class="lk-filter-sticky">
+        <form method="get">
+          <div class="lk-filter-card">
+            <div class="lk-filter-title">Frame Type</div>
+            <div class="lk-filter-list">
+              {% for value, label in frame_type_choices %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="frame_type" value="{{ value }}"
+                         id="frame_type_{{ value }}" {% if value in selected_frame_types %}checked{% endif %}>
+                  <label class="form-check-label" for="frame_type_{{ value }}">{{ label }}</label>
+                </div>
+              {% empty %}
+                <div class="text-muted small">No options</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="lk-filter-card">
+            <div class="lk-filter-title">Frame Shape</div>
+            <div class="lk-filter-list">
+              {% for value, label in shape_choices %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="shape" value="{{ value }}"
+                         id="shape_{{ value }}" {% if value in selected_shapes %}checked{% endif %}>
+                  <label class="form-check-label" for="shape_{{ value }}">{{ label }}</label>
+                </div>
+              {% empty %}
+                <div class="text-muted small">No options</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="lk-filter-card">
+            <div class="lk-filter-title">Frame Color</div>
+            <div class="lk-filter-list">
+              {% for color in color_choices %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="color" value="{{ color }}"
+                         id="color_{{ forloop.counter }}" {% if color in selected_colors %}checked{% endif %}>
+                  <label class="form-check-label" for="color_{{ forloop.counter }}">{{ color }}</label>
+                </div>
+              {% empty %}
+                <div class="text-muted small">No options</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="lk-filter-card">
+            <div class="lk-filter-title">Brands</div>
+            <div class="lk-filter-list">
+              {% for brand in brands %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="brand" value="{{ brand.slug }}"
+                         id="brand_{{ brand.slug }}" {% if brand.slug in selected_brands %}checked{% endif %}>
+                  <label class="form-check-label" for="brand_{{ brand.slug }}">{{ brand.name }}</label>
+                </div>
+              {% empty %}
+                <div class="text-muted small">No options</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="lk-filter-card">
+            <div class="lk-filter-title">Frame Size</div>
+            <div class="lk-filter-list">
+              {% for value, label in size_choices %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="size" value="{{ value }}"
+                         id="size_{{ value }}" {% if value in selected_sizes %}checked{% endif %}>
+                  <label class="form-check-label" for="size_{{ value }}">{{ label }}</label>
+                </div>
+              {% empty %}
+                <div class="text-muted small">No options</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="lk-filter-card">
+            <div class="lk-filter-title">Price</div>
+            <div class="lk-filter-list">
+              {% for label, min_price, max_price in price_choices %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="price" value="{{ label }}"
+                         id="price_{{ label }}" {% if label in selected_prices %}checked{% endif %}>
+                  <label class="form-check-label" for="price_{{ label }}">Rs. {{ min_price }} - Rs. {{ max_price }}</label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="lk-filter-card">
+            <div class="lk-filter-title">Gender</div>
+            <div class="lk-filter-list">
+              {% for value, label in gender_choices %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="gender" value="{{ value }}"
+                         id="gender_{{ value }}" {% if value in selected_genders %}checked{% endif %}>
+                  <label class="form-check-label" for="gender_{{ value }}">{{ label }}</label>
+                </div>
+              {% empty %}
+                <div class="text-muted small">No options</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="lk-filter-card">
+            <div class="lk-filter-title">Material</div>
+            <div class="lk-filter-list">
+              {% for material in material_choices %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="material" value="{{ material }}"
+                         id="material_{{ forloop.counter }}" {% if material in selected_materials %}checked{% endif %}>
+                  <label class="form-check-label" for="material_{{ forloop.counter }}">{{ material }}</label>
+                </div>
+              {% empty %}
+                <div class="text-muted small">No options</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="lk-filter-card">
+            <div class="lk-filter-title">Weight Group</div>
+            <div class="lk-filter-list">
+              {% for value, label in weight_choices %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="weight_group" value="{{ value }}"
+                         id="weight_{{ value }}" {% if value in selected_weights %}checked{% endif %}>
+                  <label class="form-check-label" for="weight_{{ value }}">{{ label }}</label>
+                </div>
+              {% empty %}
+                <div class="text-muted small">No options</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <button class="btn btn-dark w-100" type="submit">Apply Filters</button>
+          <a class="btn btn-link w-100 text-decoration-none" href="{% url 'promo_jj_stranger_things' %}">Clear all</a>
+        </form>
+      </div>
+    </aside>
+
+    <div class="col-lg-9">
+      <div class="row g-3">
+        {% for product in page_obj %}
+          <div class="col-md-4 col-sm-6">
+            <div class="lk-product-card">
+              <span class="lk-heart">ƒT­</span>
+                {% with img=product.get_primary_image secondary=product.get_secondary_image %}
+                  {% if img %}
+                    <div class="lk-product-image">
+                      <img class="lk-img-primary" src="{{ img.image.url }}" alt="{{ product.name }}">
+                      {% if secondary %}
+                        <img class="lk-img-secondary" src="{{ secondary.image.url }}" alt="{{ product.name }}">
+                      {% endif %}
+                      <div class="lk-tryon-frame">
+                        <img class="lk-tryon-photo" data-tryon-photo alt="Try On">
+                        {% if secondary %}
+                          <img class="lk-tryon-glasses" src="{{ secondary.image.url }}" alt="Glasses">
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% else %}
+                  <div class="bg-light border rounded p-5 text-center">Image</div>
+                {% endif %}
+              {% endwith %}
+              <div class="mt-3">
+                <div class="fw-semibold">{{ product.brand.name }}</div>
+                <div class="lk-product-meta">{{ product.name }}</div>
+                <div class="fw-bold mt-1">Rs {{ product.get_display_price }}</div>
+                <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-dark btn-sm mt-2">View</a>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <p>No products found.</p>
+        {% endfor %}
+      </div>
+
+      <nav class="mt-4">
+        <ul class="pagination">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if filter_query %}&{{ filter_query }}{% endif %}">Prev</a>
+            </li>
+          {% endif %}
+
+          <li class="page-item active"><a class="page-link">{{ page_obj.number }}</a></li>
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if filter_query %}&{{ filter_query }}{% endif %}">Next</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var toggle = document.getElementById("lk-tryon-toggle");
+    if (!toggle) return;
+    toggle.addEventListener("change", function () {
+      var url = new URL(window.location.href);
+      if (toggle.checked) {
+        url.searchParams.set("tryon", "1");
+      } else {
+        url.searchParams.delete("tryon");
+      }
+      window.location.href = url.toString();
+    });
+    {% if tryon_enabled %}
+      var modalTrigger = document.querySelector("[data-bs-target='#lkTryOnModal']");
+      if (modalTrigger) {
+        modalTrigger.click();
+      }
+    {% endif %}
+  });
+</script>
+{% endblock %}

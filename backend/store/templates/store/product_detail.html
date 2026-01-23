@@ -103,6 +103,22 @@
     border-bottom: 1px solid #d0d0d0;
     padding: 6px 4px;
   }
+  .lk-pincode-result {
+    border-top: 1px solid #efefef;
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+  .lk-pincode-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-weight: 600;
+  }
+  .lk-pincode-meta {
+    margin-top: 6px;
+    font-size: 13px;
+  }
   .lk-link {
     color: #1aa59a;
     font-weight: 600;
@@ -142,15 +158,7 @@
       <div class="text-muted small mb-2">Size: {{ product.get_size_display|default:"-" }}</div>
       <div class="lk-pdp-price mb-3">Rs {{ product.get_display_price }}</div>
 
-      <div class="mb-3">
-        <div class="small text-muted">Frame + Lens</div>
-      </div>
-
-      <button class="btn btn-success w-100 mb-2">SELECT LENSES</button>
-      <button class="lk-tryon-card mb-3 w-100" type="button" data-bs-toggle="modal" data-bs-target="#lkTryOnModal">
-        <span class="fw-semibold">Try On</span>
-        <img src="https://static.lenskart.com/media/desktop/img/try-on-model.jpg" alt="Try On">
-      </button>
+      <a class="btn btn-info text-white w-100 mb-3" href="{% url 'cart' %}?add={{ product.slug }}">BUY NOW</a>
 
       <div class="lk-accordion">
         <details>
@@ -166,7 +174,7 @@
         <details>
           <summary>Visit Nearby Store</summary>
           <div class="mt-2 d-flex gap-2 align-items-center">
-            <img src="https://static.lenskart.com/media/desktop/img/store-locator-thumb.jpg" alt="Store" width="60" height="60">
+            <img src="/media/products/visit_store.jpg" alt="Store" width="60" height="60">
             <div class="small">
               Please share your location to see nearby stores.<br>
               <a class="lk-link" href="#">Store Locator</a>
@@ -175,9 +183,21 @@
         </details>
         <details>
           <summary>Check Delivery Options</summary>
-          <div class="lk-pincode">
-            <input type="text" placeholder="Enter Pincode">
-            <button class="btn btn-link lk-link p-0" type="button">Check</button>
+          <div class="lk-pincode" data-pincode>
+            <input type="text" inputmode="numeric" maxlength="6" placeholder="Enter Pincode" aria-label="Enter Pincode">
+            <button class="btn btn-link lk-link p-0" type="button" data-pincode-check>Check</button>
+          </div>
+          <div class="lk-pincode-error text-danger small d-none" data-pincode-error>Please enter a valid 6 digit pincode.</div>
+          <div class="lk-pincode-result d-none" data-pincode-result>
+            <div class="lk-pincode-row">
+              <span data-pincode-value></span>
+              <button class="btn btn-link lk-link p-0" type="button" data-pincode-change>Change</button>
+            </div>
+            <div class="lk-pincode-meta">
+              <div>(Free)</div>
+              <div data-pincode-date></div>
+              <div class="text-muted">Delivery time not applicable for progressive and high power.</div>
+            </div>
           </div>
         </details>
         <details>
@@ -193,5 +213,121 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var pincodeWrap = document.querySelector("[data-pincode]");
+    if (!pincodeWrap) {
+      return;
+    }
+    var input = pincodeWrap.querySelector("input");
+    var checkBtn = pincodeWrap.querySelector("[data-pincode-check]");
+    var result = document.querySelector("[data-pincode-result]");
+    var value = document.querySelector("[data-pincode-value]");
+    var dateEl = document.querySelector("[data-pincode-date]");
+    var changeBtn = document.querySelector("[data-pincode-change]");
+    var error = document.querySelector("[data-pincode-error]");
+
+    function isValidPincode(pin) {
+      return /^[1-9][0-9]{5}$/.test(pin);
+    }
+
+    function addDays(days) {
+      var d = new Date();
+      d.setDate(d.getDate() + days);
+      return d;
+    }
+
+    function formatDate(d) {
+      var weekday = new Intl.DateTimeFormat("en-IN", { weekday: "short" });
+      var month = new Intl.DateTimeFormat("en-IN", { month: "short" });
+      var day = new Intl.DateTimeFormat("en-IN", { day: "2-digit" });
+      var year = new Intl.DateTimeFormat("en-IN", { year: "numeric" });
+      return weekday.format(d) + " " + month.format(d) + " " + day.format(d) + " " + year.format(d);
+    }
+
+    function setState(checked) {
+      if (checked) {
+        pincodeWrap.classList.add("d-none");
+        result.classList.remove("d-none");
+      } else {
+        result.classList.add("d-none");
+        pincodeWrap.classList.remove("d-none");
+      }
+    }
+
+    function showError(show, message) {
+      if (show) {
+        if (message) {
+          error.textContent = message;
+        }
+        error.classList.remove("d-none");
+      } else {
+        error.classList.add("d-none");
+      }
+    }
+
+    function setResult(payload) {
+      value.textContent = payload.pincode || input.value.trim();
+      if (payload.delivery_date) {
+        dateEl.textContent = payload.delivery_date;
+      } else {
+        var fallbackDays = payload.delivery_days || 3;
+        dateEl.textContent = formatDate(addDays(fallbackDays));
+      }
+      setState(true);
+    }
+
+    function checkPincode(pin) {
+      checkBtn.disabled = true;
+      checkBtn.textContent = "Checking...";
+      fetch("/api/pincode-check/?pincode=" + encodeURIComponent(pin), {
+        headers: { "Accept": "application/json" }
+      })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            return { ok: response.ok, data: data };
+          });
+        })
+        .then(function (result) {
+          if (!result.ok) {
+            showError(true, result.data && result.data.error ? result.data.error : "Unable to check pincode.");
+            return;
+          }
+          showError(false);
+          setResult(result.data || {});
+        })
+        .catch(function () {
+          showError(true, "Unable to reach the delivery service.");
+        })
+        .finally(function () {
+          checkBtn.disabled = false;
+          checkBtn.textContent = "Check";
+        });
+    }
+
+    checkBtn.addEventListener("click", function () {
+      var pin = input.value.trim();
+      if (!isValidPincode(pin)) {
+        showError(true, "Please enter a valid 6 digit pincode.");
+        return;
+      }
+      showError(false);
+      checkPincode(pin);
+    });
+
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        checkBtn.click();
+      }
+    });
+
+    changeBtn.addEventListener("click", function () {
+      setState(false);
+      input.focus();
+    });
+  });
+</script>
 
 {% endblock %}

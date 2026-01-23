@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Banner, Brand, Category, Product, ProductImage
+from .models import Banner, Brand, Category, DeliveryPincode, Product, ProductImage
 
 
 @admin.register(Brand)
@@ -56,3 +56,10 @@ class BannerAdmin(admin.ModelAdmin):
     list_display = ("title", "banner_type", "order", "active")
     list_filter = ("banner_type", "active")
     list_editable = ("order", "active")
+
+
+@admin.register(DeliveryPincode)
+class DeliveryPincodeAdmin(admin.ModelAdmin):
+    list_display = ("pincode", "city", "state", "delivery_days", "active", "source", "last_checked")
+    list_filter = ("active", "source", "state")
+    search_fields = ("pincode", "city", "state")

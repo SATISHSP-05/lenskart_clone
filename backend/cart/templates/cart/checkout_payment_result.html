@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Payment Result{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="card border-0 shadow-sm">
+    <div class="card-body text-center">
+      {% if success %}
+        <h4 class="text-success">Payment Successful</h4>
+        <p class="text-muted">Your payment is confirmed. Thank you for your order.</p>
+        <a class="btn btn-primary" href="{% url 'home' %}">Continue Shopping</a>
+      {% else %}
+        <h4 class="text-danger">Payment Failed</h4>
+        <p class="text-muted">Your payment could not be verified. Please try again.</p>
+        <a class="btn btn-outline-secondary" href="{% url 'checkout_payment' %}">Try Again</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

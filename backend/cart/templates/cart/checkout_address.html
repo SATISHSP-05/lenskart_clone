@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Checkout - Address{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <div class="small text-muted">Login/Signup > Shipping Address > Payment > Summary</div>
+      <h4 class="mt-1">Shipping Address</h4>
+    </div>
+    <a class="btn btn-dark" href="{% url 'checkout_address_new' %}">+ Add delivery Address</a>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <form method="post">
+        {% csrf_token %}
+        {% if addresses %}
+          {% for address in addresses %}
+            <div class="card border-0 shadow-sm mb-3">
+              <div class="card-body d-flex justify-content-between gap-3">
+                <div class="flex-grow-1">
+                  <div class="small text-muted text-uppercase">{{ address.get_label_display }}</div>
+                  <div class="fw-semibold">{{ address.address_line1 }}</div>
+                  {% if address.address_line2 %}
+                    <div class="text-muted">{{ address.address_line2 }}</div>
+                  {% endif %}
+                  <div class="text-muted">{{ address.city }}, {{ address.state }} - {{ address.pincode }}</div>
+                  <div class="small mt-2">
+                    <span class="me-2">{{ address.name }}</span>
+                    <span class="me-2">{{ address.phone }}</span>
+                    {% if address.email %}
+                      <span>{{ address.email }}</span>
+                    {% endif %}
+                  </div>
+                  <div class="small text-success mt-2">Next day delivery</div>
+                  <div class="mt-2 d-flex gap-3">
+                    <button class="btn btn-link p-0 text-decoration-none text-danger" type="button" data-delete-url="{% url 'checkout_address_delete' address.id %}">Delete</button>
+                    <a class="btn btn-link p-0 text-decoration-none" href="{% url 'checkout_address_edit' address.id %}">Edit</a>
+                  </div>
+                </div>
+                <div>
+                  <input class="form-check-input" type="radio" name="address_id" value="{{ address.id }}" {% if address.id|stringformat:"s" == selected_id|stringformat:"s" %}checked{% endif %}>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          <button class="btn btn-primary w-100" type="submit">Save Address &amp; Proceed</button>
+        {% else %}
+          <div class="text-muted">No saved addresses yet. Add one to continue.</div>
+        {% endif %}
+      </form>
+      <form id="deleteAddressForm" method="post" class="d-none">
+        {% csrf_token %}
+      </form>
+    </div>
+    <div class="col-lg-4">
+      <h5 class="mb-3">Bill Details</h5>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <span>Total item price</span>
+            <span>Rs {{ total_price|default:"0" }}</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between fw-semibold">
+            <span>Total payable</span>
+            <span>Rs {{ total_price|default:"0" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var deleteForm = document.getElementById("deleteAddressForm");
+    if (!deleteForm) {
+      return;
+    }
+    document.querySelectorAll("[data-delete-url]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (!confirm("Delete this address?")) {
+          return;
+        }
+        deleteForm.action = btn.getAttribute("data-delete-url");
+        deleteForm.submit();
+      });
+    });
+  });
+</script>
+{% endblock %}
