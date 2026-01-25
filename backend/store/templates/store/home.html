@@ -352,59 +352,57 @@
 
 <!-- PREMIUM EYEWEAR -->
 <div class="container mb-5">
-  <div class="lk-premium-hero">
-    {% if premium_banner %}
-      {% if premium_banner.link %}
-        <a href="{{ premium_banner.link }}">
-          <img src="{{ premium_banner.image.url }}" alt="{{ premium_banner.title|default:'Premium Banner' }}">
-        </a>
-      {% else %}
-        <img src="{{ premium_banner.image.url }}" alt="{{ premium_banner.title|default:'Premium Banner' }}">
-      {% endif %}
-    {% else %}
-      <img src="https://static5.lenskart.com/media/uploads/Meller-1920x520desktop_tiny_-18-12.png" alt="Meller Premium Banner">
-    {% endif %}
-  </div>
-  <div class="lk-premium-grid">
-    <div class="lk-premium-card">
-      <img src="https://static5.lenskart.com/media/catalog/product/pro/1/thumbnail/1080x1080/9df78eab33525d08d6e5fb8d27136e95//m/i/orange-black-full-rim-geometric-meller-mel-s18815-sunglasses_238583_meller_22_11_2025.jpg" alt="Meller">
-      <div class="lk-price">Rs 4500</div>
-      <button class="btn btn-outline-dark lk-view-btn" type="button">View</button>
+  <div class="lk-premium-section">
+    <div class="lk-premium-hero">
+      <div class="lk-premium-hero-copy">
+        <!-- <span class="lk-premium-hero-label">FEATURED</span> -->
+        <div class="lk-premium-hero-tagline"></div>
+      </div>
+      <div class="lk-premium-hero-visual">
+        <img src="/media/products/Meller-1920x520desktop_tiny_-18-12.jpg" alt="Fossil Premium Banner">
+      </div>
     </div>
-    <div class="lk-premium-card">
-      <img src="https://static5.lenskart.com/media/catalog/product/pro/1/thumbnail/1080x1080/9df78eab33525d08d6e5fb8d27136e95//m/i/blue-black-full-rim-geometric-meller-mel-s18815-sunglasses_238534_meller_22_11_2025.jpg" alt="Meller">
-      <div class="lk-price">Rs 4500</div>
-      <button class="btn btn-outline-dark lk-view-btn" type="button">View</button>
+
+    <div class="lk-premium-slider-header">
+      <div>
+        <div class="text-uppercase small text-muted">Exclusive frames</div>
+      </div>
+      <a href="{% url 'promo_jj_stranger_things' %}" class="btn btn-outline-light btn-sm">Shop the drop</a>
     </div>
-    <div class="lk-premium-card">
-      <img src="https://static5.lenskart.com/media/catalog/product/pro/1/thumbnail/1080x1080/9df78eab33525d08d6e5fb8d27136e95//m/i/grey-black-full-rim-round-meller-mel-s18829-sunglasses_238651_meller_22_11_2025.jpg" alt="Meller">
-      <div class="lk-price">Rs 4500</div>
-      <button class="btn btn-outline-dark lk-view-btn" type="button">View</button>
+
+    <div class="lk-premium-scroll lk-fossil-scroll">
+      {% for product in fossil_products %}
+        <article class="lk-fossil-card">
+          <div class="lk-fossil-card-img">
+            {% with img=product.get_primary_image %}
+              {% if img %}
+                <img src="{{ img.image.url }}" alt="{{ product.name }}">
+              {% else %}
+                <div class="lk-premium-scroll-placeholder">Image</div>
+              {% endif %}
+            {% endwith %}
+          </div>
+          <div class="lk-fossil-card-body">
+            <div class="lk-fossil-sku">#{{ product.id|default:"000000" }}</div>
+            <div class="lk-fossil-brand">
+              {% if product.brand %}
+                {{ product.brand.name }}
+              {% else %}
+                Lenskart
+              {% endif %}
+            </div>
+            <div class="lk-fossil-name">{{ product.name }}</div>
+            <div class="lk-fossil-price">Rs {{ product.get_display_price }}</div>
+            <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-dark btn-sm lk-fossil-view">View</a>
+          </div>
+        </article>
+      {% empty %}
+        <div class="text-white small">No Fossil frames found.</div>
+      {% endfor %}
     </div>
-    <div class="lk-premium-card">
-      <img src="https://static5.lenskart.com/media/catalog/product/pro/1/thumbnail/1080x1080/9df78eab33525d08d6e5fb8d27136e95//m/i/grey-black-full-rim-geometric-meller-mel-s18815-sunglasses_238536_meller_22_11_2025.jpg" alt="Meller">
-      <div class="lk-price">Rs 4500</div>
-      <button class="btn btn-outline-dark lk-view-btn" type="button">View</button>
+
+    <div class="lk-premium-strip">
     </div>
-    <div class="lk-premium-card">
-      <img src="https://static5.lenskart.com/media/catalog/product/pro/1/thumbnail/1080x1080/9df78eab33525d08d6e5fb8d27136e95//m/i/grey-demi-full-rim-rectangle-meller-mel-s18825-sunglasses_238579_1_meller_22_11_2025.jpg" alt="Meller">
-      <div class="lk-price">Rs 4500</div>
-      <button class="btn btn-outline-dark lk-view-btn" type="button">View</button>
-    </div>
-    <div class="lk-premium-card">
-      <img src="https://static5.lenskart.com/media/catalog/product/pro/1/thumbnail/1080x1080/9df78eab33525d08d6e5fb8d27136e95//m/i/olive-green-full-rim-round-meller-mel-s18810-sunglasses_238522_meller_22_11_2025.jpg" alt="Meller">
-      <div class="lk-price">Rs 4500</div>
-      <button class="btn btn-outline-dark lk-view-btn" type="button">View</button>
-    </div>
-  </div>
-  <div class="lk-premium-strip">
-    <img src="https://static5.lenskart.com/media/uploads/home-new-desktop-meller-bottom-strip-0501.png" alt="More Premium Eyewear">
-  </div>
-  <div class="lk-premium-more">
-    <img src="https://static5.lenskart.com/media/uploads/jj-premium-desktop-060126.png" alt="John Jacobs">
-    <img src="https://static5.lenskart.com/media/uploads/od-premium-desktop-060126.png" alt="Owndays">
-    <img src="https://static5.lenskart.com/media/uploads/lpl-premium-desktop-060126.png" alt="Le Petit Lunetier">
-    <img src="https://static5.lenskart.com/media/uploads/fossil-premium-desktop-060126.png" alt="Fossil">
   </div>
 </div>
 

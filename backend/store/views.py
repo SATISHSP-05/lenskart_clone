@@ -27,6 +27,11 @@ def home_view(request):
     exclusive_banners = Banner.objects.filter(active=True, banner_type='exclusive').order_by('order')
     premium_banner = Banner.objects.filter(active=True, banner_type='premium').order_by('order').first()
 
+    fossil_products_qs = Product.objects.filter(is_active=True, brand__slug='fossil').order_by('-created_at')
+    fossil_products = list(fossil_products_qs[:8])
+    if not fossil_products:
+        fossil_products = list(Product.objects.filter(is_active=True).order_by('-created_at')[:8])
+
     context = {
         'banners': banners,
         'categories': categories,
@@ -39,6 +44,7 @@ def home_view(request):
         'exclusive_banner': exclusive_banner,
         'exclusive_banners': exclusive_banners,
         'premium_banner': premium_banner,
+        'fossil_products': fossil_products,
         'shape_choices': Product.SHAPE_CHOICES,
     }
     return render(request, 'store/home.html', context)
