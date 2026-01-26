@@ -8,4 +8,4 @@ Pillow==12.1.0
 setuptools>=70
 twilio==8.0.0
 razorpay==2.0.0
-whitenoise==6.5.0
+whitenoise==6.11.0
