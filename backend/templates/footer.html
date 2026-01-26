@@ -14,32 +14,40 @@
   </div>
 
   <div class="container lk-footer-mid">
-    <div class="row">
-      <div class="col-md-3">
+    <div class="row g-4">
+      <div class="col-6 col-md-2">
         <h6>Services</h6>
         <div class="d-flex flex-column gap-1">
-          <a href="https://www.lenskart.com/stores">Store Locator</a>
-          <a href="https://www.lenskart.com/buying-guide">Buying Guide</a>
-          <a href="#">Frame Size</a>
+          <a href="{% url 'home' %}">Store Locator</a>
+          <a href="{% url 'home' %}">Buying Guide</a>
+          <a href="{% url 'home' %}">Frame Size</a>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-6 col-md-2">
         <h6>About Us</h6>
         <div class="d-flex flex-column gap-1">
-          <a href="#">We Are Hiring</a>
-          <a href="#">Refer And Earn</a>
-          <a href="#">Lenskart Coupons</a>
+          <a href="{% url 'home' %}">We Are Hiring</a>
+          <a href="{% url 'home' %}">Refer And Earn</a>
+          <a href="{% url 'home' %}">Lenskart Coupons</a>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-6 col-md-2">
         <h6>Help</h6>
         <div class="d-flex flex-column gap-1">
-          <a href="#">FAQs</a>
-          <a href="#">Grievance Redressal</a>
-          <a href="#">Caderni</a>
+          <a href="{% url 'home' %}">FAQs</a>
+          <a href="{% url 'home' %}">Grievance Redressal</a>
+          <a href="{% url 'home' %}">Caderni</a>
         </div>
       </div>
-      <div class="col-md-3 text-md-end mt-3 mt-md-0">
+      <div class="col-6 col-md-2">
+        <h6>Our Projects</h6>
+        <div class="d-flex flex-column gap-1">
+          <a href="{% url 'home' %}">Lenskart Clone</a>
+          <a href="{% url 'home' %}">Store Front</a>
+          <a href="{% url 'home' %}">Admin Panel</a>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
         <div class="mb-2">Download Lenskart App to buy Eyeglasses, Sunglasses and Contact Lenses</div>
         <div class="d-flex justify-content-md-end gap-2">
           <img src="https://cdn.ayroui.com/1.0/images/footer/play-store.svg" alt="Google Play" height="28">
