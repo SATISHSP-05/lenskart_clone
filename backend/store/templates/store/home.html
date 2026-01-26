@@ -350,6 +350,41 @@
   {% endif %}
 </div>
 
+{% if exclusive_products %}
+  <div class="container mb-5">
+    <h3 class="mb-3">Our Own Products</h3>
+    <div class="lk-exclusive-product-grid">
+      {% for product in exclusive_products %}
+        <div class="lk-exclusive-product-card">
+          <a class="lk-exclusive-product-media-link" href="{% url 'product_detail' product.slug %}">
+            <div class="lk-exclusive-product-media">
+              {% with image=product.get_primary_image %}
+                {% if image %}
+                  <img src="{{ image.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                  <div class="lk-exclusive-product-media-placeholder">Image</div>
+                {% endif %}
+              {% endwith %}
+            </div>
+          </a>
+          <div class="lk-exclusive-product-card-body">
+            <div class="lk-exclusive-product-brand">
+              {% if product.brand %}
+                {{ product.brand.name }}
+              {% else %}
+                Lenskart
+              {% endif %}
+            </div>
+            <div class="lk-exclusive-product-name">{{ product.name }}</div>
+            <div class="lk-exclusive-product-price">Starts at ₹{{ product.get_display_price }}</div>
+            <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-dark btn-sm lk-exclusive-product-cta">Shop</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
 <!-- PREMIUM EYEWEAR -->
 <div class="container mb-5">
   <div class="lk-premium-section">
@@ -409,26 +444,42 @@
 <!-- OUR BRANDS -->
 <div class="container mb-5">
   <h3 class="mb-3">Our Brands</h3>
-  <div class="lk-brand-grid">
-    <a class="lk-brand-card" href="https://www.lenskart.com/eyewear/brands/vincent-chase.html">
-      <img src="https://static5.lenskart.com/media/uploads/VC-Other-Brandsdesktop-18-12-AV.png" alt="Vincent Chase">
-    </a>
-    <a class="lk-brand-card" href="https://www.lenskart.com/eyeglasses/collections/as-seen-on-shark-tank.html">
-      <img src="https://static5.lenskart.com/media/uploads/Hustlr-Other-Brandsdesktop-18-12.png" alt="Hustlr">
-    </a>
-    <a class="lk-brand-card" href="{% url 'brand_listing' 'john-jacobs' %}">
-      <img src="https://static5.lenskart.com/media/uploads/jj-IN-desktop-060126.png" alt="John Jacobs">
-    </a>
-    <a class="lk-brand-card" href="https://www.lenskart.com/contact-lenses/brands/aqualens/clear-lenses.html">
-      <img src="https://static5.lenskart.com/media/uploads/Aqualens-Other-Brandsdesktop-18-12-AV.png" alt="Aqualens">
-    </a>
-    <a class="lk-brand-card" href="https://www.lenskart.com/eyeglasses/brands/lenskart-air.html">
-      <img src="https://static5.lenskart.com/media/uploads/lk-air-IN-desktop-060126.png" alt="Lenskart Air">
-    </a>
-    <a class="lk-brand-card" href="https://www.lenskart.com/eyewear/kids.html">
-      <img src="https://static5.lenskart.com/media/uploads/Hooper-Other-Brandsdesktop-18-12-AV.png" alt="Hooper">
-    </a>
-  </div>
+  {% if brand_cards %}
+    <div class="lk-brand-grid">
+      {% for brand in brand_cards %}
+        <a class="lk-brand-card" href="{% url 'brand_listing' brand.slug %}">
+          {% if brand.logo %}
+            <img src="{{ brand.logo.url }}" alt="{{ brand.name }}">
+          {% else %}
+            <div class="lk-brand-card-placeholder">
+              <span>{{ brand.name }}</span>
+            </div>
+          {% endif %}
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="lk-brand-grid">
+      <a class="lk-brand-card" href="https://www.lenskart.com/eyewear/brands/vincent-chase.html">
+        <img src="https://static5.lenskart.com/media/uploads/VC-Other-Brandsdesktop-18-12-AV.png" alt="Vincent Chase">
+      </a>
+      <a class="lk-brand-card" href="https://www.lenskart.com/eyeglasses/collections/as-seen-on-shark-tank.html">
+        <img src="https://static5.lenskart.com/media/uploads/Hustlr-Other-Brandsdesktop-18-12.png" alt="Hustlr">
+      </a>
+      <a class="lk-brand-card" href="{% url 'brand_listing' 'john-jacobs' %}">
+        <img src="https://static5.lenskart.com/media/uploads/jj-IN-desktop-060126.png" alt="John Jacobs">
+      </a>
+      <a class="lk-brand-card" href="https://www.lenskart.com/contact-lenses/brands/aqualens/clear-lenses.html">
+        <img src="https://static5.lenskart.com/media/uploads/Aqualens-Other-Brandsdesktop-18-12-AV.png" alt="Aqualens">
+      </a>
+      <a class="lk-brand-card" href="https://www.lenskart.com/eyeglasses/brands/lenskart-air.html">
+        <img src="https://static5.lenskart.com/media/uploads/lk-air-IN-desktop-060126.png" alt="Lenskart Air">
+      </a>
+      <a class="lk-brand-card" href="https://www.lenskart.com/eyewear/kids.html">
+        <img src="https://static5.lenskart.com/media/uploads/Hooper-Other-Brandsdesktop-18-12-AV.png" alt="Hooper">
+      </a>
+    </div>
+  {% endif %}
 </div>
 
 <!-- GET A FREE EYE CHECKUP -->

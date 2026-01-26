@@ -20,6 +20,7 @@ def home_view(request):
     trending_products = Product.objects.filter(is_active=True, is_trending=True).order_by('-created_at')[:12]
     premium_products = Product.objects.filter(is_active=True, is_premium=True).order_by('-created_at')[:12]
     exclusive_products = Product.objects.filter(is_active=True, is_exclusive=True).order_by('-created_at')[:12]
+    brand_cards = Brand.objects.filter(active=True)
     coupon_banner = Banner.objects.filter(active=True, banner_type='coupon').order_by('order').first()
     replacement_banner = Banner.objects.filter(active=True, banner_type='replacement').order_by('order').first()
     buy1get1_banner = Banner.objects.filter(active=True, banner_type='buy1get1').order_by('order').first()
@@ -38,6 +39,7 @@ def home_view(request):
         'trending_products': trending_products,
         'premium_products': premium_products,
         'exclusive_products': exclusive_products,
+        'brand_cards': brand_cards,
         'coupon_banner': coupon_banner,
         'replacement_banner': replacement_banner,
         'buy1get1_banner': buy1get1_banner,
