@@ -9,7 +9,7 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Min, Q
 from django.utils import timezone
 from .models import Banner, Brand, Category, DeliveryPincode, Product, HtoAddress
 
@@ -20,13 +20,18 @@ def home_view(request):
     trending_products = Product.objects.filter(is_active=True, is_trending=True).order_by('-created_at')[:12]
     premium_products = Product.objects.filter(is_active=True, is_premium=True).order_by('-created_at')[:12]
     exclusive_products = Product.objects.filter(is_active=True, is_exclusive=True).order_by('-created_at')[:12]
-    brand_cards = Brand.objects.filter(active=True)
+    brand_cards = (
+        Brand.objects.filter(active=True, products__is_active=True)
+        .annotate(min_price=Min("products__base_price"))
+        .distinct()
+    )
     coupon_banner = Banner.objects.filter(active=True, banner_type='coupon').order_by('order').first()
     replacement_banner = Banner.objects.filter(active=True, banner_type='replacement').order_by('order').first()
     buy1get1_banner = Banner.objects.filter(active=True, banner_type='buy1get1').order_by('order').first()
     exclusive_banner = Banner.objects.filter(active=True, banner_type='exclusive').order_by('order').first()
     exclusive_banners = Banner.objects.filter(active=True, banner_type='exclusive').order_by('order')
     premium_banner = Banner.objects.filter(active=True, banner_type='premium').order_by('order').first()
+    special_banners = [banner for banner in (coupon_banner, replacement_banner, buy1get1_banner) if banner]
 
     fossil_products_qs = Product.objects.filter(is_active=True, brand__slug='fossil').order_by('-created_at')
     fossil_products = list(fossil_products_qs[:8])
@@ -40,9 +45,7 @@ def home_view(request):
         'premium_products': premium_products,
         'exclusive_products': exclusive_products,
         'brand_cards': brand_cards,
-        'coupon_banner': coupon_banner,
-        'replacement_banner': replacement_banner,
-        'buy1get1_banner': buy1get1_banner,
+        'special_banners': special_banners,
         'exclusive_banner': exclusive_banner,
         'exclusive_banners': exclusive_banners,
         'premium_banner': premium_banner,

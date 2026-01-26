@@ -100,42 +100,36 @@
 
 <!-- COUPON BANNER -->
 <div class="container mb-5">
-  {% if coupon_banner %}
-    {% if coupon_banner.link %}
-      <a href="{{ coupon_banner.link }}">
-        <img src="{{ coupon_banner.image.url }}" class="img-fluid w-100 rounded" alt="{{ coupon_banner.title|default:'Coupon Banner' }}">
-      </a>
-    {% else %}
-      <img src="{{ coupon_banner.image.url }}" class="img-fluid w-100 rounded" alt="{{ coupon_banner.title|default:'Coupon Banner' }}">
-    {% endif %}
+  {% if special_banners %}
+    <div id="promoBannerCarousel" class="carousel slide rounded" data-bs-ride="carousel" data-bs-interval="4500">
+      <div class="carousel-inner rounded">
+        {% for banner in special_banners %}
+          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            {% if banner.link %}
+              <a href="{{ banner.link }}">
+                <img src="{{ banner.image.url }}" class="d-block w-100" alt="{{ banner.title|default:'Promo Banner' }}">
+              </a>
+            {% else %}
+              <img src="{{ banner.image.url }}" class="d-block w-100" alt="{{ banner.title|default:'Promo Banner' }}">
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      {% if special_banners|length > 1 %}
+        <button class="carousel-control-prev" type="button" data-bs-target="#promoBannerCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#promoBannerCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      {% endif %}
+    </div>
   {% else %}
     <img src="https://static5.lenskart.com/media/uploads/desktop-flr-banner-1612.png" class="img-fluid w-100 rounded" alt="50% Off Coupon Banner">
   {% endif %}
 </div>
-
-{% if replacement_banner %}
-  <div class="container mb-5">
-    {% if replacement_banner.link %}
-      <a href="{{ replacement_banner.link }}">
-        <img src="{{ replacement_banner.image.url }}" class="img-fluid w-100 rounded" alt="{{ replacement_banner.title|default:'Replacement Banner' }}">
-      </a>
-    {% else %}
-      <img src="{{ replacement_banner.image.url }}" class="img-fluid w-100 rounded" alt="{{ replacement_banner.title|default:'Replacement Banner' }}">
-    {% endif %}
-  </div>
-{% endif %}
-
-{% if buy1get1_banner %}
-  <div class="container mb-5">
-    {% if buy1get1_banner.link %}
-      <a href="{{ buy1get1_banner.link }}">
-        <img src="{{ buy1get1_banner.image.url }}" class="img-fluid w-100 rounded" alt="{{ buy1get1_banner.title|default:'Buy 1 Get 1 Banner' }}">
-      </a>
-    {% else %}
-      <img src="{{ buy1get1_banner.image.url }}" class="img-fluid w-100 rounded" alt="{{ buy1get1_banner.title|default:'Buy 1 Get 1 Banner' }}">
-    {% endif %}
-  </div>
-{% endif %}
 
 <!-- GET THE PERFECT SHAPE - EYEGLASSES -->
 <div class="container mb-5">
@@ -448,13 +442,22 @@
     <div class="lk-brand-grid">
       {% for brand in brand_cards %}
         <a class="lk-brand-card" href="{% url 'brand_listing' brand.slug %}">
-          {% if brand.logo %}
-            <img src="{{ brand.logo.url }}" alt="{{ brand.name }}">
-          {% else %}
-            <div class="lk-brand-card-placeholder">
-              <span>{{ brand.name }}</span>
-            </div>
-          {% endif %}
+          <div class="lk-brand-card-media">
+            {% if brand.logo %}
+              <img src="{{ brand.logo.url }}" alt="{{ brand.name }}">
+            {% else %}
+              <div class="lk-brand-card-placeholder">
+                <span>{{ brand.name }}</span>
+              </div>
+            {% endif %}
+          </div>
+          <div class="lk-brand-card-caption">
+            <span class="lk-brand-title">{{ brand.name }}</span>
+            {% if brand.min_price %}
+              <!-- <span class="lk-brand-price">Starts at ₹{{ brand.min_price|floatformat:0 }}</span> -->
+            {% endif %}
+            <span class="lk-brand-shop">Shop</span>
+          </div>
         </a>
       {% endfor %}
     </div>
@@ -485,8 +488,8 @@
 <!-- GET A FREE EYE CHECKUP -->
 <div class="container mb-5">
   <h3 class="mb-3">Get a FREE Eye Check Up</h3>
-  <div class="lk-eyecheck-grid">
-    <a class="lk-eyecheck-card" href="https://www.lenskart.com/stores">
+    <div class="lk-eyecheck-grid">
+      <a class="lk-eyecheck-card" href="{% url 'stores_lenskart' %}">
       <img src="https://static5.lenskart.com/media/uploads/Store-Eye-Test-5X6desktop-18-12.png" alt="Visit Nearest Store">
       <div class="lk-eyecheck-body">
         <div class="lk-eyecheck-title">Visit Nearest Store</div>
@@ -494,7 +497,7 @@
         <span class="lk-eyecheck-arrow">→</span>
       </div>
     </a>
-    <a class="lk-eyecheck-card" href="https://www.lenskart.com/lenskart-at-home">
+    <a class="lk-eyecheck-card" href="{% url 'home_eye_test' %}">
       <img src="https://static5.lenskart.com/media/uploads/Home-Eye-Test-5X6desktop-18-12-AV.png" alt="Schedule at Home">
       <div class="lk-eyecheck-body">
         <div class="lk-eyecheck-title">Schedule at Home</div>
@@ -502,7 +505,7 @@
         <span class="lk-eyecheck-arrow">→</span>
       </div>
     </a>
-    <a class="lk-eyecheck-card" href="https://www.lenskart.com/HTO/online-eye-test/">
+    <a class="lk-eyecheck-card" href="{% url 'home_eye_test' %}">
       <img src="https://static5.lenskart.com/media/uploads/Online-Eye-Test-5X6desktop-18-12.png" alt="Take an Online Eye Test">
       <div class="lk-eyecheck-body">
         <div class="lk-eyecheck-title">Take an Online Eye Test</div>
@@ -511,11 +514,6 @@
       </div>
     </a>
   </div>
-</div>
-
-<!-- BUY 1 GET 1 -->
-<div class="container mb-5">
-  <img src="https://static5.lenskart.com/media/uploads/bou-second-later-1812-av.png" class="img-fluid w-100 rounded" alt="Buy 1 Get 1">
 </div>
 
 <div class="container mb-5">
