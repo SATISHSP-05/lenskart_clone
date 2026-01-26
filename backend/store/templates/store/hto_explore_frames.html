@@ -171,6 +171,21 @@
     font-size: 12px;
     text-align: center;
   }
+  .lk-store-offline {
+    margin-top: 12px;
+    border: 1px dashed #e0e0ef;
+    border-radius: 12px;
+    padding: 12px;
+    background: #fdfdfd;
+  }
+  .lk-store-offline-grid {
+    margin-top: 12px;
+  }
+  .lk-store-offline-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1f1f4a;
+  }
   @media (max-width: 991px) {
     .lk-store-layout {
       grid-template-columns: 1fr;
@@ -211,6 +226,57 @@
 
       <div class="lk-store-count" id="lk-store-count">Searching near you...</div>
       <div id="lk-store-results"></div>
+      {% if store_data %}
+        <div
+          id="lk-store-offline"
+          class="lk-store-offline"
+          data-count="{{ store_data|length }}"
+        >
+          <div class="lk-store-offline-title">Offline store list (from uploaded data)</div>
+          <div class="lk-store-offline-grid">
+            {% for store in store_data|slice:":12" %}
+              <div class="lk-store-card">
+                <div class="lk-store-thumb">Lenskart</div>
+                <div>
+                  <div class="lk-store-name">{{ store.name }}</div>
+                  {% if store.address %}
+                    <div class="lk-store-meta">{{ store.address }}</div>
+                  {% endif %}
+                  {% if store.phone %}
+                    <div class="lk-store-meta">Phone: {{ store.phone }}</div>
+                  {% endif %}
+                  {% if store.status or store.closing %}
+                    <div class="lk-store-meta">
+                      {{ store.status }}{% if store.status and store.closing %} • {% endif %}{{ store.closing }}
+                    </div>
+                  {% endif %}
+                  <div class="lk-store-actions">
+                    {% if store.directions_url %}
+                      <a
+                        href="{{ store.directions_url }}"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        0 Km. Direction
+                      </a>
+                    {% endif %}
+                    {% if store.store_url %}
+                      <a
+                        class="primary"
+                        href="{{ store.store_url }}"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        Book Free Appointment
+                      </a>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
     </div>
 
     <div class="lk-store-map">
@@ -226,6 +292,13 @@
   var lkService;
   var lkMarkers = [];
   var lkInfoWindow;
+  var fallbackSection = document.getElementById("lk-store-offline");
+  var offlineCount = fallbackSection ? Number(fallbackSection.dataset.count) || 0 : 0;
+
+  function toggleOfflineSection(show) {
+    if (!fallbackSection) return;
+    fallbackSection.style.display = show ? "block" : "none";
+  }
 
   function initStoresMap() {
     var defaultCenter = { lat: 28.6139, lng: 77.2090 };
@@ -288,6 +361,7 @@
     }
 
     searchNearby(defaultCenter);
+    toggleOfflineSection(false);
   }
 
   function clearMarkers() {
@@ -328,9 +402,15 @@
 
     if (status !== google.maps.places.PlacesServiceStatus.OK || !results || !results.length) {
       count.textContent = "No stores found near this location.";
+      if (offlineCount) {
+        count.textContent += " Showing " + offlineCount + " offline stores.";
+      }
+      toggleOfflineSection(offlineCount > 0);
       list.innerHTML = '<div class="lk-store-empty">Try another city or pincode.</div>';
       return;
     }
+
+    toggleOfflineSection(false);
 
     count.textContent = results.length + " stores providing free eye test near you";
 

@@ -1,6 +1,8 @@
+import csv
 import json
 import re
 from datetime import timedelta
+from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 import ssl
@@ -56,6 +58,47 @@ def home_view(request):
 
 
 PINCODE_RE = re.compile(r"^[1-9][0-9]{5}$")
+
+STORE_DATA_FILE = Path(__file__).resolve().parent / "data" / "google.csv"
+
+
+def _load_store_data(limit=20):
+    stores = []
+    if not STORE_DATA_FILE.exists():
+        return stores
+
+    try:
+        with STORE_DATA_FILE.open(newline="", encoding="utf-8") as csvfile:
+            reader = csv.reader(csvfile)
+            next(reader, None)
+            for row in reader:
+                if not row or len(row) < 3:
+                    continue
+                name = row[0].strip()
+                address_segments = [segment.strip("· ").strip() for segment in row[2].split("·") if segment.strip()]
+                address = address_segments[0] if address_segments else ""
+                phone = address_segments[1] if len(address_segments) > 1 else ""
+                closing = row[3].replace("·", "").strip() if len(row) > 3 else ""
+                status = row[4].strip() if len(row) > 4 else ""
+                store_url = row[10].strip() if len(row) > 10 else ""
+                directions_url = row[12].strip() if len(row) > 12 else ""
+
+                stores.append(
+                    {
+                        "name": name,
+                        "address": address,
+                        "phone": phone,
+                        "closing": closing,
+                        "status": status,
+                        "store_url": store_url,
+                        "directions_url": directions_url,
+                    }
+                )
+                if len(stores) >= limit:
+                    break
+    except Exception:
+        pass
+    return stores
 
 
 def _format_delivery_date(days):
@@ -486,7 +529,8 @@ def hto_location_unavailable_view(request):
 
 
 def hto_explore_frames_view(request):
-    return render(request, "store/hto_explore_frames.html")
+    store_data = _load_store_data()
+    return render(request, "store/hto_explore_frames.html", {"store_data": store_data})
 
 
 def hto_date_time_view(request):
