@@ -13,7 +13,9 @@ services:
     volumes:
       - .:/app:cached
       - staticfiles:/app/backend/staticfiles
+      - media:/app/backend/media
     restart: unless-stopped
 
 volumes:
   staticfiles:
+  media:

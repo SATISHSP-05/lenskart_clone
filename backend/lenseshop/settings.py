@@ -152,6 +152,8 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
 
+SERVE_MEDIA_FILES = os.getenv("SERVE_MEDIA_FILES", "False").lower() == "true"
+
 PINCODE_API_URL = "https://api.postalpincode.in/pincode/{pincode}"
 PINCODE_DEFAULT_DELIVERY_DAYS = 3
 PINCODE_VERIFY_SSL = False
