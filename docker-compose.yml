@@ -1,21 +1,18 @@
-version: "3.9"
-
 services:
   web:
     build:
       context: .
       dockerfile: Dockerfile
-    command: gunicorn --workers 3 --bind 0.0.0.0:8000 lenseshop.wsgi:application
+    command: gunicorn --workers 3 --timeout 120 --bind 0.0.0.0:8000 lenseshop.wsgi:application
     ports:
       - "8000:8000"
     env_file:
       - backend/.env
     volumes:
       - .:/app:cached
+      - ./backend/media:/app/backend/media
       - staticfiles:/app/backend/staticfiles
-      - media:/app/backend/media
     restart: unless-stopped
 
 volumes:
   staticfiles:
-  media:
