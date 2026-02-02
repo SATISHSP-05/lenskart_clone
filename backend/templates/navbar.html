@@ -35,7 +35,7 @@
           {{ request.user.username }}
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="/orders/">My Orders</a></li>
+          <li><a class="dropdown-item" href="{% url 'orders:list' %}">My Orders</a></li>
           <li><a class="dropdown-item" href="{% url 'my_prescriptions' %}">My Prescription</a></li>
           <li><a class="dropdown-item" href="{% url 'store_credit' %}">My Store Credit</a></li>
           <li><a class="dropdown-item" href="{% url 'account_information' %}">Account Information</a></li>
