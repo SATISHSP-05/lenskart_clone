@@ -135,7 +135,7 @@
 
     var stored = [];
     try {
-      stored = JSON.parse(localStorage.getItem("lkHtoAddresses") || "[]");
+      stored = JSON.parse(getCookie("lkHtoAddresses") || "[]");
     } catch (err) {
       stored = [];
     }
@@ -152,7 +152,7 @@
       return;
     }
 
-    var selected = localStorage.getItem("lkHtoSelectedAddress");
+    var selected = getCookie("lkHtoSelectedAddress");
 
     all.forEach(function (item, index) {
       var card = document.createElement("div");
@@ -189,7 +189,7 @@
           el.classList.remove("active");
         });
         card.classList.add("active");
-        localStorage.setItem("lkHtoSelectedAddress", JSON.stringify(item));
+        setCookie("lkHtoSelectedAddress", JSON.stringify(item), 30);
       });
       container.appendChild(card);
     });

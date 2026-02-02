@@ -262,13 +262,13 @@
 
       var existing = [];
       try {
-        existing = JSON.parse(localStorage.getItem("lkHtoAddresses") || "[]");
+        existing = JSON.parse(getCookie("lkHtoAddresses") || "[]");
       } catch (err) {
         existing = [];
       }
       existing.unshift(payload);
-      localStorage.setItem("lkHtoAddresses", JSON.stringify(existing));
-      localStorage.setItem("lkHtoSelectedAddress", JSON.stringify(payload));
+      setCookie("lkHtoAddresses", JSON.stringify(existing), 30);
+      setCookie("lkHtoSelectedAddress", JSON.stringify(payload), 30);
       window.location.href = "{% url 'hto_address' %}";
     });
   });

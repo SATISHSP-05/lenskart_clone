@@ -126,7 +126,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     var addressSummary = document.getElementById("lk-hto-address-summary");
-    var storedAddress = localStorage.getItem("lkHtoSelectedAddress");
+    var storedAddress = getCookie("lkHtoSelectedAddress");
     if (addressSummary) {
       if (storedAddress) {
         try {
@@ -210,7 +210,7 @@
       });
     });
 
-    var saved = localStorage.getItem("lkHtoDateTime");
+    var saved = getCookie("lkHtoDateTime");
     if (saved) {
       try {
         var parsed = JSON.parse(saved);
@@ -235,7 +235,7 @@
           alert("Please select people, date, and time.");
           return;
         }
-        localStorage.setItem("lkHtoDateTime", JSON.stringify(selection));
+        setCookie("lkHtoDateTime", JSON.stringify(selection), 30);
       });
     }
   });

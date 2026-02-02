@@ -15,6 +15,27 @@
 </head>
 <body>
 
+  <script>
+    function setCookie(name, value, days = 7) {
+      var expires = "";
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + encodeURIComponent(value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+      var match = document.cookie.match(new RegExp("(^|;)\\s*" + name + "=([^;]+)"));
+      return match ? decodeURIComponent(match[2]) : "";
+    }
+
+    function deleteCookie(name) {
+      document.cookie = name + "=; Max-Age=0; path=/";
+    }
+  </script>
+
   {% include 'navbar.html' %}
 
   <div class="mt-3">
@@ -82,7 +103,7 @@
           ctx.drawImage(video, 0, 0, width, height);
           var dataUrl = canvas.toDataURL("image/png");
           thumb.src = dataUrl;
-          localStorage.setItem("lkTryOnPhoto", dataUrl);
+          setCookie("lkTryOnPhoto", dataUrl, 7);
           showStep(2);
         });
       }
@@ -116,7 +137,7 @@
       if (tryon) {
         document.body.classList.add("lk-tryon-on");
       }
-      var photo = localStorage.getItem("lkTryOnPhoto");
+      var photo = getCookie("lkTryOnPhoto");
       if (!photo) return;
       document.querySelectorAll("[data-tryon-photo]").forEach(function (img) {
         img.src = photo;
@@ -255,8 +276,8 @@
                 alert(payload.data.detail || "Invalid OTP.");
                 return;
               }
-              localStorage.setItem("access_token", payload.data.access);
-              localStorage.setItem("refresh_token", payload.data.refresh);
+              setCookie("access_token", payload.data.access, 7);
+              setCookie("refresh_token", payload.data.refresh, 7);
               window.location.reload();
             })
             .catch(function () {

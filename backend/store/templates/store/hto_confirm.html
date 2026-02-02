@@ -155,8 +155,8 @@
     var address = null;
     var schedule = null;
     try {
-      address = JSON.parse(localStorage.getItem("lkHtoSelectedAddress") || "null");
-      schedule = JSON.parse(localStorage.getItem("lkHtoDateTime") || "null");
+      address = JSON.parse(getCookie("lkHtoSelectedAddress") || "null");
+      schedule = JSON.parse(getCookie("lkHtoDateTime") || "null");
     } catch (err) {
       address = null;
       schedule = null;
