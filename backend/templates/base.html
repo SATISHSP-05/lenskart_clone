@@ -36,6 +36,23 @@
     }
   </script>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      [
+        "access_token",
+        "refresh_token",
+        "lkTryOnPhoto",
+        "lkHtoAddresses",
+        "lkHtoSelectedAddress",
+        "lkHtoDateTime",
+      ].forEach(function (key) {
+        if (window.localStorage) {
+          localStorage.removeItem(key);
+        }
+      });
+    });
+  </script>
+
   {% include 'navbar.html' %}
 
   <div class="mt-3">
